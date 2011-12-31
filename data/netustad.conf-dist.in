@@ -1,0 +1,40 @@
+#/*******************************/
+#/* netUstad Configuration File */
+#/* netustad.conf               */
+#/*******************************/
+
+# mainlogfile is full path of the log file\
+# where the program logs will be logged
+mainlogfile = "/var/log/netustad.log"
+
+# accesslogfile is full path of the log file\
+# where the access logs will be logged
+accesslogfile = "/var/log/netustad-access.log"
+
+# adminuser is the administrator username to login.
+# empty username not allowed.
+# Username cannot contain spaces and ':','$' characters
+adminuser = "admin"
+
+# adminpasswd is the administrator password to login.
+# empty password not allowed
+# Password is crypted with libc crypt function.
+adminpasswd = "$1$netustad$afbo3wDm2zbHcypa..LPu/"
+
+# listenport is the port number which deamon listens.
+# If you change this value while deamon is running
+# You must kill & then start the daemon.
+listenport = "54745"
+
+# sesexpiretime is Session Expire Time out.
+# Default value is 300 seconds. You must define the variable as seconds.
+sesexpiretime = "600"
+
+# lc_all is your language 
+# Default value is "en_US"
+lc_all = "tr_TR.ISO8859-9"
+
+# SSL KEYS and SSL CERTIFICATES
+#
+key_file = @prefix@/share/netustad/cert/netustad.key
+cert_file = @prefix@/share/netustad/cert/netustad.crt

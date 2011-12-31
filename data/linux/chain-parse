@@ -1,0 +1,106 @@
+#!/usr/bin/awk -f
+BEGIN{
+	sid=ENVIRON["server_sid"]
+	chain=ENVIRON["CHAIN"]
+}
+{  
+# ============================
+# ====== Default Values ======
+# ============================
+
+on_link = "<td class=editdelete><a href='edit?"$1"@"chain"$"sid"' style='color:red'><img src='images/editor.png$"sid"' width=20 height=20 align=top border=0></a></td>";
+son_link = "<td class=editdelete><a href='javascript:del(\""chain"\",\""$1"\")' style='color:red'><img border=0 src='images/eraser.png$"sid"' width=20 height=20 align=top></a></td>";
+
+kuralno		= "<td align=right>"$1"</td>";
+paketsayisi	= "<td align=right>"$2"</td>";
+paketboyutu	= "<td align=right>"$3"</td>";
+if (length($5)>4) {
+	proto = "<td>"substr($5,1,length($5)-2)"</td>";
+	opt = "<td>"substr($5,length($5)-1,length($5))"</td>";
+	position=5;
+} else {
+	proto	= "<td>"$5"</td>";
+	opt	= "<td>"$6"</td>";
+	position=6
+}
+
+#====================
+#== Action Parsing ==
+#====================
+
+if ($4 == "ACCEPT") action = "<td><img src='images/action_allow.png$"sid"' width=32 height=32 align=absmiddle border=0>"$4"</td>"
+else if ($4 == "DROP") action = "<td><img src='images/action_deny.png$"sid"' width=32 height=32 align=absmiddle border=0>"$4"</td>"
+else if ($4 == "QUEUE") action = "<td><img src='images/action_pipequeue.png$"sid"' width=32 height=32 align=absmiddle border=0>"$4"</td>"
+else if ($4 == "REJECT") action = "<td><img src='images/action_unreach.png$"sid"' width=32 height=32 align=absmiddle border=0>"$4"</td>"
+else action = "<td>"$4"</td>"
+
+#=====================
+#== input interface ==
+#=====================
+if ($(position+1) == "*") $(position+1) = "any"
+if_in	= "<td>"$(position+1)"</td>";
+
+#======================
+#== output interface ==
+#======================
+
+if ($(position+2) == "*") $(position+2) = "any"
+if_out	= "<td>"$(position+2)"</td>";
+
+#=================
+#== Source Addr ==
+#=================
+if ($(position+3) == "0.0.0.0/0") $(position+3)="anywhere"
+src	= "<td>"$(position+3)"</td>";
+spt	= "<td> any</td>";
+if (proto == "<td>tcp</td>" || proto == "<td>udp</td>") {
+	if ($(position+6) ~ /^spt:/ || $(position+6) ~ /^spts:/) {
+		sub(/spt:/,"",$(position+6));
+		sub(/spts:/,"",$(position+6));
+		spt="<td>"$(position+6)"</td>";
+		$(position+6)="";
+		$(position+5)="";
+	}
+}
+
+#======================
+#== Destination Addr ==
+#======================
+if ($(position+4) == "0.0.0.0/0") $(position+4) = "anywhere"
+dst	= "<td>"$(position+4)"</td>";
+dpt	= "<td> any</td>";
+if (proto == "<td>tcp</td>" || proto == "<td>udp</td>") {
+	if ($12 ~ /^dpt:/ || $(position+6) ~ /^dpts:/) {
+		sub(/dpt:/,"",$(position+6));
+		sub(/dpts:/,"",$(position+6));
+		dpt="<td>"$(position+6)"</td>";
+		$(position+6)="";
+		$(position+5)="";
+	} else if ($(position+7) ~ /^dpt:/ || $(position+7) ~ /^dpts:/) {
+		sub(/dpt:/,"",$(position+7));
+		sub(/dpts:/,"",$(position+7));
+		dpt="<td>"$(position+7)"</td>";
+		$(position+7)="";
+		$(position+5)="";
+	}
+}
+
+
+#=======================
+#== Calculate Options ==
+#=======================
+eoption="";
+for (i=(position+5); i<=NF; i++) {
+	eoption=eoption" "$i;
+}
+if (eoption=="") eoption="<td>&nbsp;</td>";
+else eoption="<td>"eoption"</td>";
+
+#===========================
+#== Print Calculated Data ==
+#===========================
+if (NR %2 == 0) print "<tr class=a1>"
+else print "<tr class=a2>"
+print on_link,kuralno,paketsayisi,paketboyutu,proto,\
+      opt,if_in,if_out,src,spt,action,dst,dpt,eoption,son_link"</tr>\n"
+}

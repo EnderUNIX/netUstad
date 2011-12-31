@@ -1,0 +1,339 @@
+{  
+# ============================================
+# ===== Default Definitions Of Variables =====
+# ============================================
+proto_cmd = "cat proto.inc";
+ruleoption1_cmd = "cat ruleoption1.inc";
+ruleoption2_cmd = "cat ruleoption2.inc";
+action1_cmd = "cat action1.inc";
+action2_cmd = "cat action2.inc";
+intf_cmd = "/sbin/ifconfig -lu"
+
+if ($1 == "65535") {
+	print "Yanlis Talep";
+	exit;
+}
+
+kuralno = $1;
+is_log = "0";
+intfstat = "0";
+ipoptstat = "0";
+tcpoptstat = "0";
+tcpflagstat = "0";
+logamountstat = "0";
+icmptypestat = "0";
+keepstate = "0";
+bridged = "0";
+frag = "0";
+established = "0";
+setup = "0";
+if_in = "0";
+if_out = "0";
+prob = "";
+probstat = "0";
+
+#=========================
+#== Parse Firewall Rule ==
+#=========================
+
+for (i=3; i<=NF; i++) {
+	#===================================
+	#== Does rule contain "log" word? ==
+	#===================================
+	if ($i == "log") {
+		is_log = "1";
+		$i++;
+		if ($i == "logamount") {
+			logamountstat="1";
+			$i++;
+			logamount=$i;
+		}
+	}
+
+	#=============================
+	#== Part about "from" field ==
+	#=============================
+	if ($i == "from") {
+		i++;
+		srcaddr = $i;
+		if ($i == "{") {
+			for (j=i+1; j<=NF; j++) {
+				srcaddr = srcaddr" "$j;
+				if ($j == "}") break
+			}
+			i = j;
+		}
+		else if ($i == "not") {
+			i++;
+			srcaddr = srcaddr" "$i;
+		}
+		i++;
+		if ($i == "to") {
+			srcportstat = "0";
+			srcport = " ";
+		}
+		else {
+			srcportstat = "1";
+			srcport = $i;
+		}
+	}
+
+	#===========================
+	#== part about "to" field ==
+	#===========================
+	if ($i == "to") {
+		i++;
+		dstaddr = $i
+		if ($i == "{") {
+			for (j=i+1; j<=NF; j++) {
+				dstaddr = dstaddr" "$j;
+				if ($j == "}") break
+			}
+			i = j;
+		}
+		else if ($i == "not") {
+			i++;
+			dstaddr = dstaddr" "$i;
+		}
+		son_pozisyon = i;
+		i++;
+		if ($i == "dst-port") {
+			i++;
+			dstportstat = "1";
+			dstport = $i;
+		}
+		else if ($i ~ "^[0-9]"){
+			dstportstat = "1";
+			dstport = $i;
+		}
+		else {
+			dstportstat = "0";
+			dstport = " ";
+		}
+	}
+
+	#=========================================
+	#== Part about "MAC" field (ipfw2 only) ==
+	#=========================================
+	"sysctl net.link.ether.ipfw" | getline etherdemux
+	sayi = split (etherdemux, etherstat, " ");
+	if (etherstat[2] == 0) {
+		mac = macyok
+	}
+	else {
+		if ($i == "MAC") {
+			i++;
+			mac_to = $i
+			i++;
+			mac = "MAC from "$i;
+			mac = mac" to "mac_to;
+		}
+		else {
+			mac = "MAC from any to any"
+		}
+	}
+	close("sysctl net.link.ether.ipfw");
+	
+};
+
+#============================
+#== Parse Rule Second Step ==
+#==  File Depended Checks  ==
+#============================
+for (x=2; x<=NF; x++) {
+	ruleoption1_cmd | getline ruleoptiontext1
+	ruleoption2_cmd | getline ruleoptiontext2
+	action1_cmd | getline actiontext1
+	action2_cmd | getline actiontext2
+       	proto_cmd | getline prototext
+	optionsayisi1 = split (ruleoptiontext1, ruleoptionlist1, " ");
+	optionsayisi2 = split (ruleoptiontext2, ruleoptionlist2, " ");
+	actionsayisi1 = split (actiontext1, actionlist1, " ");
+	actionsayisi2 = split (actiontext2, actionlist2, " ");
+        protosayisi = split (prototext, protolist, " ");
+	#================================
+	#== Options without parameters ==
+	#================================
+	for (y=1; y<=optionsayisi1; y++) {
+		if (ruleoptionlist1[y] == $x) {
+			if ($x == "keep-state") keepstate="1";
+			else if ($x == "layer2") bridged="1";
+			else if ($x == "frag") frag="1";
+			else if ($x == "established") established="1";
+			else if ($x == "setup") setup="1";
+			else if ($x == "in") if_in="1";
+			else if ($x == "out") if_out="1";
+		}
+	}
+	#================================
+	#== Actions without parameters ==
+	#================================
+        for (y=1; y<=actionsayisi1; y++) {
+                if (actionlist1[y] == $x) {
+                        islem = $x;
+                }
+        }
+	#=============================
+	#== Options with parameters ==
+	#=============================
+	for (y=1; y<=optionsayisi2; y++) {
+		if (ruleoptionlist2[y] == $x) {
+			if ($x == "ipoptions") {ipoptstat="1"; x++; ipopt=$x}
+			else if ($x == "tcpoptions") {tcpoptstat="1"; x++; tcpopt=$x}
+			else if ($x == "tcpflags") {tcpflagstat="1"; x++; tcpflag=$x}
+			else if ($x == "icmptypes") {icmptypestat="1"; x++; icmp_type=$x}
+			else if ($x == "prob") {probstat="1"; x++; prob=$x}
+			else if ($x == "via") {intfstat="1"; x++; interface=$x}
+		}
+	}
+	#=============================
+	#== Actions with parameters ==
+	#=============================
+        for (y=1; y<=actionsayisi2; y++) {
+                if (actionlist2[y] == $x) {
+                        islem = $x
+                        x++;
+			if (islem == "fwd") fwd_addr = $x;
+			else if (islem == "skipto")  skipto  = $x;
+			else if (islem == "unreach") unreach = $x;
+			else if (islem == "queue"  || islem == "pipe" || \
+				 islem == "divert" || islem == "tee") \
+			     pipeno = $x;
+                        else islem = islem""$x;
+                }
+        }
+	#===================
+	#== Find Protocol ==
+	#===================
+	for (y=1; y<=protosayisi; y++) {
+		if (protolist[y] == $x) { proto = protolist[y]; break }
+	}
+}
+close(ruleoption1_cmd);
+close(ruleoption2_cmd);
+close(action1_cmd);
+close(action2_cmd);
+close(proto_cmd);
+
+#=================================
+#== Send The Values Of The Form ==
+#=================================
+print "\n<script>"
+print "function locate_select_index(selectid, s_value) {";
+print "for (i = 0;i<document.getElementById(selectid).length;i++) {";
+print "\t if (document.getElementById(selectid)[i].value == s_value) {";
+print "\t \t document.getElementById(selectid).selectedIndex = i;";
+print "\t \t break;";
+print "\t }";
+print "}";
+print "}";
+print " ";
+
+intf_cmd | getline intftext
+intfsayisi = split (intftext,intflist, " ");
+for (y=1; y<=intfsayisi; y++) {
+        print "document.rulebody.via.options["y-1"]= new Option(\""intflist[y]"\", \""intflist[y]"\");";
+}
+close(intf_cmd);
+
+print "document.getElementById('rule_no').value='"kuralno"';";
+print "document.getElementById('oldruleno').value='"kuralno"';";
+print "document.getElementById('via_stat').checked="intfstat";";
+if (intfstat == "1") {
+	print "document.getElementById('via').disabled=0;";
+	print "locate_select_index('via','"interface"');"i; 
+}
+print "document.getElementById('prob_stat').checked="probstat";";
+if (probstat == "1") {
+	print "document.getElementById('prob').disabled=0;";
+	print "document.getElementById('prob').value='"prob"';";
+}
+print "locate_select_index('action','"islem"');";
+if (islem == "unreach") 
+	print "locate_select_index('unreach_code','"unreach"');";
+else if (islem=="pipe" || islem=="queue" || islem=="divert" || islem=="tee")
+        print "document.getElementById('pipe_no').value='"pipeno"';";
+else if (islem == "fwd")
+	print "document.getElementById('fwd_addr').value='"fwd_addr"';";
+else if (islem == "skipto")
+	print "document.getElementById('skip_to').value='"skipto"';";
+print "document.getElementById('log_stat').checked="is_log";";
+if (is_log == "1") {
+	print "document.getElementById('logamount_stat').disabled=0;";
+	print "document.getElementById('logamount_stat').checked="logamountstat";";
+	if (logamountstat == "1") {
+		print "document.getElementById('logamount').disabled=0;";
+		print "document.getElementById('logamount').value='"logamount"';"; 
+	}
+}
+print "locate_select_index('protocol','"proto"');";
+if (proto == "icmp") {
+	print "document.getElementById('icmp_type_stat').checked="icmptypestat";";
+	if (icmptypestat == "1") {
+		print "document.getElementById('icmp_type').disabled=0;";
+		print "locate_select_index('icmp_type','"icmp_type"');"; 
+	}
+}
+else if (proto == "udp") {
+	print "document.getElementById('dst_port_stat').checked="dstportstat";";
+	if (dstportstat =="1") {
+		print "document.getElementById('dst_port').disabled=0;";
+		print "document.getElementById('dst_port').value='"dstport"';";
+	}
+}
+else if (proto == "tcp") {
+	print "document.getElementById('tcp_opt_stat').checked="tcpoptstat";";
+	print "document.getElementById('tcp_flags_stat').checked="tcpflagstat";";
+	if (tcpoptstat == "1") {
+		print "document.getElementById('tcp_opt').disabled=0;";
+		print "locate_select_index('tcp_opt','"tcpopt"');";
+	}
+	if (tcpflagstat == "1") {
+		print "document.getElementById('tcp_flags').disabled=0;";
+		print "locate_select_index('tcp_flags','"tcpflag"');";
+	}
+	print "document.getElementById('src_port_stat').checked="srcportstat";";
+	if (srcportstat == "1") {
+		print "document.getElementById('src_port').disabled=0;";
+		print "document.getElementById('src_port').value='"srcport"';";
+	}
+	print "document.getElementById('dst_port_stat').checked="dstportstat";";
+	if (dstportstat == "1") {
+		print "document.getElementById('dst_port').disabled=0;";
+		print "document.getElementById('dst_port').value='"dstport"';";
+	}
+	print "document.getElementById('established').checked="established";";
+	print "document.getElementById('setup').checked="setup";";
+}
+
+print "document.getElementById('src_addr').value='"srcaddr"';";
+if (srcaddr == "me") print "document.rulebody.src_addr_stat[1].checked=1;";
+else if (srcaddr != "any") {
+	print "document.getElementById('src_addr').disabled=0;";
+	print "document.rulebody.src_addr_stat[2].checked=1;";
+}
+
+print "document.getElementById('dst_addr').value='"dstaddr"';";
+if (dstaddr == "me") print "document.rulebody.dst_addr_stat[1].checked=1;";
+else if (dstaddr != "any") {
+	print "document.getElementById('dst_addr').disabled=0;";
+	print "document.rulebody.dst_addr_stat[2].checked=1;";
+}
+
+print "document.getElementById('keep-state').checked="keepstate";";
+print "document.getElementById('bridged').checked="bridged";";
+print "document.getElementById('fragmented').checked="frag";";
+print "document.getElementById('ip_opt_stat').checked="ipoptstat";";
+if (ipoptstat == "1") {
+	print "document.getElementById('ip_opt').disabled=0;";
+	print "locate_select_index('ip_opt','"ipopt"');";
+}
+if (if_in == "0" || if_out == "0")
+	print "document.rulebody.direction['0'].checked=1;";
+else
+	print "document.rulebody.direction['0'].checked=0;";
+print "document.rulebody.direction['1'].checked="if_in";";
+print "document.rulebody.direction['2'].checked="if_out";";
+print "action_check_vis();";
+print "proto_check_vis();";
+}

@@ -1,0 +1,7 @@
+#!/bin/sh
+i=0
+for intf in `$cat_cmd /proc/net/dev | $awk_cmd '{if (NR>2) print}'| cut -d: -f1 ` 
+	do
+		echo "document.rulebody.if_in.options["$i']=new Option("'$intf'","'$intf'");'
+		echo "document.rulebody.if_out.options["$((i++))']=new Option("'$intf'","'$intf'");'
+	done

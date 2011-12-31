@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#==================
+#== Send headers ==
+#==================
+./header
+
+#================
+#== Print Data ==
+#================
+echo "<table cellspacing=3 cellpadding=0>"
+echo "<tr><td valign=top>"
+echo "<h5 align=center> IP `$gettext_cmd "Statistics"`</h5>"
+echo "<table cellspacing=3 cellpadding=0 align=center>"
+$netstat_cmd -s -p ip -f inet | $awk_cmd -f stats-parse
+echo "</table><br><hr>"
+echo "<h5 align=center> UDP `$gettext_cmd "Statistics"`</h5>"
+echo "<table cellspacing=3 cellpadding=0 align=center>"
+$netstat_cmd -s -p udp -f inet | $awk_cmd -f stats-parse
+echo "</table><br><hr>"
+echo "<h5 align=center> ICMP `$gettext_cmd "Statistics"`</h5>"
+echo "<table cellspacing=3 cellpadding=0 align=center>"
+$netstat_cmd -s -p icmp -f inet | $awk_cmd -f stats-parse
+echo "</table>"
+echo "</td><td valign=top>"
+echo "<h5 align=center> TCP `$gettext_cmd "Statistics"`</h5>"
+echo "<table cellspacing=3 cellpadding=0 align=center>"
+$netstat_cmd -s -p tcp -f inet | $awk_cmd -f stats-parse
+echo "</table>"
+echo "</td></tr>"
+echo "</table>"
+
+#=================
+#== Send footer ==
+#=================
+./footer

@@ -1,0 +1,11 @@
+- Thread Support
+- SaykoMode (Paranoidic Security Checks)
+- Bandwitdh Management Module
+- IPFW2 Support
+- DHCP Client Support For Interface Configuration Module
+- Node-name System (Defining Clients)
+- Profile System (For creating temporary Rule&Config sets)
+- db Support for Profiles and Node-names
+- VPN Management Module
+- DMZ Management Module
+- DHCP Server Management Module

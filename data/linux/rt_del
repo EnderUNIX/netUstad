@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#======================
+#== Delete The Route ==
+#======================
+netmask=`$netstat_cmd -rn -A inet | $grep_cmd $route | $awk_cmd '{print $3}'`
+echo $netmask | $grep_cmd '255\.255\.255\.255' > /dev/null
+if test $? -eq 0; then
+	$route_cmd del -host $route
+else
+	$route_cmd del -net $route netmask $netmask
+fi
+
+#===================
+#== Call rt_table ==
+#===================
+./rt_table

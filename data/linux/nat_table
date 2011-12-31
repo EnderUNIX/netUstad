@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#==================
+#== Send headers ==
+#==================
+./header
+
+#================
+#== Print Data ==
+#================
+echo '<script language="JavaScript" type="text/javascript">'
+echo "function nat_del(chain, num, dest) {"
+echo " if (confirm('`$gettext_cmd "NAT"`: '+dest+' `$gettext_cmd "will be deleted. Is it Okay?"`')) window.location='nat_del?chain='+chain+'&num='+num+'"'$'$server_sid"' }"
+echo "function static_add() {"
+echo " publichost=document.getElementById('static_ip').value;"
+echo " privatehost=document.getElementById('local_ip').value;"
+echo " if (publichost!='' && privatehost!='') {"
+echo " 		window.location='nat_add?static&publichost='+publichost+'&privatehost='+privatehost+'$"$server_sid"';"
+echo " } else {"
+echo "	alert('`$gettext_cmd "Please Fill All Fields"`');"
+echo " } }"
+echo "function vserv_add() {"
+echo " proto=document.getElementById('proto').value;"
+echo " publichost=document.getElementById('publichost').value;"
+echo " publicport=document.getElementById('publicport').value;"
+echo " privatehost=document.getElementById('privatehost').value;"
+echo " privateport=document.getElementById('privateport').value;"
+echo " if (proto!='' && publichost!='' && privatehost!='' && publicport!='' && privateport!='') {"
+echo " 		window.location='nat_add?vserver&proto='+proto+'&publichost='+publichost+'&publicport='+publicport+'&privatehost='+privatehost+'&privateport='+privateport+'$"$server_sid"';"
+echo " } else {"
+echo "	alert('`$gettext_cmd "Please Fill All Fields"`');"
+echo " } }"
+echo "function dynamic_add() {"
+echo " proto=document.getElementById('d_proto').value;"
+echo " src_ip=document.getElementById('src_ip').value;"
+echo " src_port=document.getElementById('src_port').value;"
+echo " dst_ip=document.getElementById('dst_ip').value;"
+echo " dst_port=document.getElementById('dst_port').value;"
+echo " map_ip=document.getElementById('map_ip').value;"
+echo " if (proto!='' && src_ip!='' && dst_ip!='' && map_ip!='') {"
+echo " 		window.location='nat_add?dynamic&proto='+proto+'&src_ip='+src_ip+'&src_port='+src_port+'&dst_ip='+dst_ip+'&dst_port='+dst_port+'&map_ip='+map_ip+'$"$server_sid"';"
+echo " } else {"
+echo "	alert('`$gettext_cmd "Please Fill All Fields"`');"
+echo " } }"
+echo "</script>"
+echo " "
+${fw_cmd} -t nat -L --line-numbers -v -n | $sed_cmd /^$/d | ${awk_cmd} -f nat-parse 2>&1
+
+
+#=================
+#== Send footer ==
+#=================
+./footer

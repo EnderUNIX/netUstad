@@ -1,0 +1,36 @@
+#!/usr/bin/awk -f
+BEGIN{
+	lasteth=""
+	i=0
+	sid=ENVIRON["server_sid"]
+}
+{
+ eth=substr($0,1,10)
+ gsub(/\ /,"",eth)
+ if (eth!="") {
+ 	intf[eth]=eth
+	lasteth=eth
+ }
+ for (x=1;x<=NF;x++) {
+ 	if ($x~/Mask/) {
+ 		split($x,tmp,":")
+ 		netmask[lasteth]=tmp[2]
+ 	} else if ($x~/addr:/) {
+ 		split($x,tmp,":")
+ 		addr[lasteth]=tmp[2]
+ 	} else if ($x~/MTU/) {
+ 		split($x,tmp,":")
+ 		mtu[lasteth]=tmp[2]
+ 	}
+ }
+}
+END{
+ if (i %2 == 0) print "<tr class=a1>"
+ else print "<tr class=a2>"
+ i++
+ for (x in intf) {
+	print "<td class=editdelete><a href='if_edit?form&intf="intf[x]"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>"
+	print "<td>"intf[x]"</td><td align=right>"mtu[x]"</td><td>"addr[x]"</td><td>"netmask[x]"</td>"
+        print "<td class=editdelete><img src='images/eraser_static.png$"sid"' width=20 height=20 align=top border=0></td></tr>"
+ }
+}

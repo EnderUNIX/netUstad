@@ -1,0 +1,10 @@
+{
+	for (i = 1 ; i <= NF ; i++) {
+		if (i == 1)
+			print "<tr><td>" $i "</td>"
+		else if (i == NF)
+			print "<td>" $i "</td></tr>"
+		else
+			print "<td>" $i "</td>"
+	}
+}

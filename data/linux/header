@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+# ==================
+# == Send Headers ==
+# ==================
+
+echo "Content-type: text/html&&" | $tr_cmd "&" "\n"
+echo "<html>" 
+echo "<head>" 
+echo "<title> netUstad - $netustadversion </title>"
+echo '<META Http-Equiv="Pragma" Content="no-cache">' 
+echo '<META http-equiv="Content-Type" content="text/html; charset='`$gettext_cmd "charset"`'">'
+echo "</head>" 
+echo "<link rel='stylesheet' type='text/css' href='/netustad.css'>" 
+echo '<script language="JavaScript" type="text/javascript">'
+echo "function del(chainid,ruleno)"
+echo "{ if (confirm('"`$gettext_cmd "Chain"`":'+chainid+' - "`$gettext_cmd "Rule"`":'+ruleno+' "`$gettext_cmd "will be deleted. Is it Okay?"`"')) window.location='del?'+chainid+'@'+ruleno+'"'$'$server_sid"' }"
+echo "</script>"
+echo "<body topmargin=0 marginwidth=0 marginheight=0 bottommargin=0>" 
+echo "<table width=100% height=100% cellspacing=0 cellpadding=0 class=std>"
+echo "<tr>"
+echo '	<td class=std height=100><center><table width=600 height=100 cellspacing=0 cellpadding=0 class=std background="images/banner.png">'
+echo '		<tr>'
+echo '			<td class=std valign=bottom rowspan=2 align=right height=100 width=132><img src="images/buton_1.png" width="20" height="35" border="0"></td>'
+echo '			<td class=std align=center height=65 width=232>&nbsp;</td>'
+echo '			<td class=std valign=bottom rowspan=2 align=left height=100 width=236><img src="images/buton_3.png" width="20" height="35" border="0"></td>'
+echo '		</tr>'
+echo '		<tr>'
+echo '			<td class=std id=hdr1 height=35 background=images/buton_2.png valign=middle>'`$gettext_cmd "administration panel"`'</td>'
+echo '		</tr>'
+echo '	</table></center><br></td>'
+
+echo "</tr>"
+echo "<tr>"
+echo "	<td class=std valign=middle>"
+echo "		<table width=100% height=35 cellspacing=0 cellpadding=0 class=std>"
+echo "			<tr>"
+echo "				<td class=std align=right background=images/buton_0.png><img src='images/buton_1.png' height=35 width=20  align=absmiddle border=0></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/"'$'$server_sid"'><img src=images/menu_rulelist.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "Rule List"`"</a></td>"
+echo "				<td class=std width=40><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0><img src='images/buton_1.png' height=35 width=20 align=absmiddle border=0></td>"
+#echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/addform"'$'$server_sid"'><img src=images/menu_addrule.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "Add Rule"`"</a></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/nat_table"'$'$server_sid"'><img src=images/menu_addrule.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "NAT Table"`"</a></td>"
+echo "				<td class=std width=40><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0><img src='images/buton_1.png' height=35 width=20 align=absmiddle border=0></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/rt_table"'$'$server_sid"'><img src=images/menu_addrule.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "Routing Table"`"</a></td>"
+echo "				<td class=std width=40><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0><img src='images/buton_1.png' height=35 width=20 align=absmiddle border=0></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/if_table"'$'$server_sid"'><img src=images/menu_addrule.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "NetIf Table"`"</a></td>"
+echo "				<td class=std width=40><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0><img src='images/buton_1.png' height=35 width=20 align=absmiddle border=0></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/stats"'$'$server_sid"'><img src=images/menu_addrule.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "Statistics"`"</a></td>"
+echo "				<td class=std width=40><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0><img src='images/buton_1.png' height=35 width=20 align=absmiddle border=0></td>"
+echo "				<td class=std align=middle width=100 background=images/buton_2.png><a href='/logout"'$'$server_sid"'><img src=images/menu_logout.png border=0 align=absmiddle width=30 height=30>"`$gettext_cmd "Log Out"`"</a></td>"
+echo "				<td class=std align=left background=images/buton_0.png><img src='images/buton_3.png' height=35 width=20 align=absmiddle border=0></td>"
+echo "			</tr>"
+echo "		</table>"
+echo "          <table width=100% cellspacing=0 cellpadding=0 class=std bgcolor=#DBE0E4>"
+echo "  		<tr>"
+echo "				<td class=std><br><center>"

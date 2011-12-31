@@ -1,0 +1,102 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+confdir=@config_dir@
+nat_enable=`${cat_cmd} /etc/rc.conf | ${grep_cmd} natd_enable | ${tail_cmd} -n1 | ${sed_cmd} s/natd_enable=//`
+
+action=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $1}'`
+case $action in
+static)
+	oldnat=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $2}' | $sed_cmd s/oldnat=//`
+	publichost=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $3}' | $sed_cmd s/publichost=//`
+	privatehost=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $4}' | $sed_cmd s/privatehost=//`
+	${cat_cmd} ${confdir}/netustad.natd | sed /"$oldnat"/d > /tmp/netustad.natd
+	mv /tmp/netustad.natd ${confdir}
+	echo "redirect_address $publichost $privatehost" >> $confdir/netustad.natd
+	./shownat
+	;;
+vserver)
+	oldnat=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $2}' | $sed_cmd s/oldnat=// | $sed_cmd s/:/\ /`
+	proto=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $3}' | $sed_cmd s/proto=//`
+	publichost=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $4}' | $sed_cmd s/publichost=//`
+	publicport=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $5}' | $sed_cmd s/publicport=//`
+	privatehost=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $6}' | $sed_cmd s/privatehost=//`
+	privateport=`echo $QUERY_STRING | @awk_cmd@ -F\& '{print $7}' | $sed_cmd s/privateport=//`
+	${cat_cmd} ${confdir}/netustad.natd | sed /"$oldnat"/d > /tmp/netustad.natd
+	mv /tmp/netustad.natd ${confdir}
+	echo "redirect_port $proto $privatehost:$privateport $publichost:$publicport" >> $confdir/netustad.natd
+	./shownat
+	;;
+*)
+	#==================
+	#== Send headers ==
+	#==================
+	./header
+
+	#================
+	#== Print Data ==
+	#================
+	echo '<script language="JavaScript" type="text/javascript">'
+	echo "function nat_del(dest)"
+	echo "{ if (confirm('`$gettext_cmd "NAT"`: '+dest+' `$gettext_cmd "will be deleted. Is it Okay?"`')) window.location='nat_del?'+dest+'"'$'$server_sid"' }"
+	echo "function nat_edit(type, oldnat) {"
+	echo "if (type=='static') {"
+	echo " publichost=document.getElementById('static_ip').value;"
+	echo " privatehost=document.getElementById('local_ip').value;"
+	echo " if (publichost!='' && privatehost!='') {"
+	echo " 		window.location='nat_edit?static&oldnat='+oldnat+'&publichost='+publichost+'&privatehost='+privatehost+'$"$server_sid"';"
+	echo " } else {"
+	echo "	alert('`$gettext_cmd "Please Fill All Fields"`');"
+	echo " }"
+	echo "} else {"
+	echo " proto=document.getElementById('proto').value;"
+	echo " publichost=document.getElementById('publichost').value;"
+	echo " publicport=document.getElementById('publicport').value;"
+	echo " privatehost=document.getElementById('privatehost').value;"
+	echo " privateport=document.getElementById('privateport').value;"
+	echo " if (proto!='' && publichost!='' && privatehost!='' && publicport!='' && privateport!='') {"
+	echo " 		window.location='nat_edit?vserver&oldnat='+oldnat+'&proto='+proto+'&publichost='+publichost+'&publicport='+publicport+'&privatehost='+privatehost+'&privateport='+privateport+'$"$server_sid"';"
+	echo " } else {"
+	echo "	alert('`$gettext_cmd "Please Fill All Fields"`');"
+	echo " } } }"
+	echo "</script>"
+	echo " "
+	case ${nat_enable} in \"[Yy][Ee][Ss]\")
+		nat_flags=`${cat_cmd} /etc/rc.conf | ${grep_cmd} natd_flags | ${tail_cmd} -n1 | ${sed_cmd} s/natd_flags=//`
+		$fw_cmd add 65534 divert 1234 esp from me to me > /dev/null
+		if test $? -eq 0; then
+			divert_enable=1
+			$fw_cmd del 65534
+		else 
+			divert_enable=0
+		fi
+		echo "natd_enable=YES<br>"
+		if test ${divert_enable} -eq 1; then
+			echo "IPDIVERT Mevcut, natd'ye yonlendirme yapilabilir.<br>"
+		else
+			echo "Bu sistemde DIVERT yok. Nat Calismaz"
+			exit 1
+		fi
+		${cat_cmd} ${confdir}/netustad.natd | ${awk_cmd} -f nat-edit -v edit_nat=$action
+		;;
+	*)
+		echo "/etc/rc.conf dosyasinda natd aktif degil."
+		exit 1
+		;;
+	esac
+
+
+	#=================
+	#== Send footer ==
+	#=================
+	./footer
+	;;
+esac

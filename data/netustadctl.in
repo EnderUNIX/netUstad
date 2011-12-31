@@ -1,0 +1,51 @@
+#!/bin/sh
+####################################
+# netustadctl: netUstad ConTroLler #
+####################################
+
+prefix=@prefix@
+
+case $1 in
+	start)
+		${prefix}/sbin/netustad
+		;;
+	stop)
+		killall netustad
+		if test $? -eq 0; then
+			echo ""
+			echo "netUstad stopped."
+			echo ""
+		fi
+		;;
+	reload)
+		killall -HUP netustad
+		echo ""
+		echo "netUstad configuration reloaded"
+		echo ""
+		;;
+	restart)
+		killall netustad
+		${prefix}/sbin/netustad
+		;;
+	status)
+		a=`ps ax | grep netustad | grep -v grep | grep -v netustadctl`
+		if test $? -eq 1; then
+			echo ""
+			echo "netUstad doesn't working."
+			echo ""
+			exit 1
+		else
+			echo ""
+			echo "netUstad is working."
+			echo "PID: "`echo $a | @awk_cmd@ '{print $1}'`
+			echo ""
+			exit 0
+		fi
+		;;
+	*)
+		echo ""
+		echo "usage: netustadctl start|stop|status|restart|reload"
+		echo ""
+		exit 64
+		;;
+esac

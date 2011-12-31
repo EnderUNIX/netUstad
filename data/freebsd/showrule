@@ -1,0 +1,79 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+
+# ========================
+# == Global Definations ==
+# ========================
+static=`$gettext_cmd "Static Rules"`
+statefull=`$gettext_cmd "Statefull Rules"`
+tbl_header_ruleno=`$gettext_cmd "RuleNo"`
+tbl_header_hits=`$gettext_cmd "Rule Hits"`
+tbl_header_action=`$gettext_cmd "Action"`
+tbl_header_log=`$gettext_cmd "Log"`
+tbl_header_proto=`$gettext_cmd "Proto"`
+tbl_header_from=`$gettext_cmd "Source"`
+tbl_header_from_port=`$gettext_cmd "S.Port"`
+tbl_header_to=`$gettext_cmd "Target"`
+tbl_header_to_port=`$gettext_cmd "T.Port"`
+tbl_header_options=`$gettext_cmd "Options"`
+parse_macyok=`$gettext_cmd "NoMac"`
+cd  $work_path
+
+
+# ==================
+# == Send Headers ==
+# ==================
+
+./header
+
+# =======================
+# == List Static Rules ==
+# =======================
+echo "	<h5>$static</h5><table cellspacing=3 cellpadding=0>"
+echo "	<tr align=center class=header>"
+echo "	<td class=editdelete><b>v</b></td>"
+echo "	<td class=std><b>$tbl_header_ruleno</b></td>"
+echo "	<td class=std><b>$tbl_header_proto</b></td>"
+echo "	<td class=std><b>$tbl_header_from</b></td>"
+echo "	<td class=std><b>$tbl_header_from_port</b></td>"
+echo "	<td class=std><b>$tbl_header_action</b></td>"
+echo "	<td class=std><b>$tbl_header_to</b></td>"
+echo "	<td class=std><b>$tbl_header_to_port</b></td>"
+echo "	<td class=std><b>$tbl_header_options</b></td>"
+echo "	<td class=std><b>$tbl_header_log</b></td>"
+echo "	<td class=std><b>$tbl_header_hits</b></td>"
+echo "	<td class=editdelete><b>v</b></td></tr>" 
+echo `$fw_cmd show | $awk_cmd -f $work_path/static-parse\
+					-v macyok=$parse_macyok`
+echo "</table>" 
+
+# ==========================
+# == List StateFull Rules == 
+# ==========================
+
+echo "<h5>"$statefull"</h5>" 
+echo "<table border=0>" 
+echo `$fw_cmd -d show | $awk_cmd '{ if (i >= 1) print; if ($2 == "Dynamic") i++; }' | $awk_cmd -f maketable` 
+echo "</table><br>" 
+
+# =========================
+# == Write Configuration ==
+# =========================
+echo "<br>"
+echo '<input name="add" type=button value="'"`$gettext_cmd "Add Rule" `"'" onClick="window.location='"'"'addform$'$server_sid"'"'" class=btn>'
+echo '&nbsp;<input name="write" type=button value="'"`$gettext_cmd "Write Configuration" `"'" onClick="window.location='"'"'write$'$server_sid"'"'" class=btn>'
+echo "<br><br>"
+
+
+# =====================
+# == Closing Headers ==
+# =====================
+
+./footer

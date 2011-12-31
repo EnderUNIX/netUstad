@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+confdir=@config_dir@
+del_nat=`echo $nat_name | sed s/:/\ /`
+
+${cat_cmd} ${confdir}/netustad.natd | sed /"$del_nat"/d > /tmp/netustad.natd
+mv /tmp/netustad.natd ${confdir}
+
+#==================
+#== Call shownat ==
+#==================
+./shownat

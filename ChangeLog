@@ -1,0 +1,91 @@
+netUstad v0.3.1
+- Problems that causes the process to terminate, solved.
+- Virtual Server configuration problem fixed.
+- Some fixes in nat management module.
+
+netUstad v0.3.0b
+- Make system moved to GNU AutoTools
+- Transplatform Support (Linux with iptables and FreeBSD with ipfw)
+	- Tested on Slackware 10, Debian sid, Debian sarge
+		    FreeBSD 4.x, FreeBSD 5.x, FreeBSD 6.0-CURRENT
+- Added SSL support (tested with OpenSSL) 
+	thanks to M.Onur YALAZI (onur.yalazi@gmail.com)
+- Header handling rewriten to handle more than one header
+	also 	added Host: request requirement 
+		added Date: header to sended headers
+		added Head: request handling
+		added HTTP/1.1 100 Continue response
+	nunetworks_discardheaders has been removed.
+	thanks to M.Onur YALAZI (onur.yalazi@gmail.com)
+- Native Language Support with gettext.
+- Added translation "tr".
+- Network Address Translation (NAT) Table Management Module (both natd and iptables) added.
+- Static Routing Table Management Module added.
+- Interface Configuration Management Module added.
+- FreeBSD scripts converted from csh to sh
+- Linux scripts written in sh.
+- Checking Effective UID.
+- Moved to Mark Martinec's portable snprintf implementation
+- Seperated Network codes into network.c
+- Seperated execute_cgi to execcgi.c
+- log_msg function now handles adding local time to logs
+- cat function has been removed. Using binarycat instead
+- Firewall configuration saving feature (For FreeBSD) added.
+- Edit rule, direction parsing (FreeBSD) fixed.
+- Login form submit problem fixed.
+
+netUstad v0.2-BETA:
+- New User Interface.
+- CSS usage improved.
+- Small icons that symbolize actions added.
+- Service name feature added that converts known port numbers to names, according to /etc/services file.
+- In execute_cgi() function in netustad.c, execl() replaced with execle() for Linux compatibility.
+- Environment management system in acceptrequest.c modified according to execute_cgi() function.
+- In acceptrequest.c, rightcmp() function added. 
+	By this func. you can easily compare strings from right to left order. 
+	Old static comparisions removed. So sizeof acceptrequest.c file decreased.
+- sesexpiretime variable added to netustad.conf(5). Session Expire Time can be changed in netustad.conf(5)
+- When Logging the log-in event, client ip address added to logs.
+- Confirm screen added when deleting rules.
+- Fragmented opiton bug fixed.
+- Destination port bug on FreeBSD 4.x fixed.
+- Buffer Overflow problem in auth.c fixed.
+
+netUstad v0.1.1:
+- Startup script added
+- netustadctl now works.
+- Directory hierarchy changed. Now it depends on hier(7). 
+
+netUstad v0.1:
+- By Now, Project name is netUstad
+- Now I am a member of EnderUNIX Software Development Team
+- Background image added
+- Check for unwanted characters is added to acceptrequest.c
+
+ipfwAdmin v0.0.3b:
+- Most of Buffer Overflow problems corrected.
+
+ipfwAdmin v0.0.3a:
+- Now it can serve image files too.
+- Show ipfwAdmin version at all pages.
+- When executing program at any directory else program directory,
+	opening configuration file problem corrected.
+- Now ipfwAdmin detects working directory automatically.
+	The "workdir" variable in the configuration file (ipfwadmin.conf) removed.
+- By now, ipfwadmin can take arguments from console.
+	For example show config file path. For more help use "ipfwadmin -h"
+
+
+ipfwAdmin v0.0.2a:
+- Authentication Form Header (Warnings) corrected.
+- Listening port number now can be configured via ipfwadmin.conf file.
+- adminpasswd now works via MD5 crypt instead of plain text.
+- ipfwadminpasswd command is added to change adminpasswd.
+- ipfwadminctl script is written to control ipfwadmin.
+- Added syslog support for panic condition errors (EMERG).
+- Logging format changed: 
+	- Left http style, now using own logging format.
+	- Now it also logs date&time.
+	- Log when the administrator signed in/out.
+	- Log if adminpasswd changed.
+	- Log if session expired.

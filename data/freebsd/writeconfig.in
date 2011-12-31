@@ -1,0 +1,31 @@
+#!/bin/sh 
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+confdir=@config_dir@
+	
+cp /etc/rc.conf /etc/rc.conf.backup
+$cat_cmd /etc/rc.conf | $sed_cmd /firewall_/d > /etc/rc.conf_tmp
+echo 'firewall_enable="YES"' >> /etc/rc.conf_tmp
+echo 'firewall_script="$confdir/netustad.ipfw"' >> /etc/rc.conf_tmp
+mv /etc/rc.conf_tmp /etc/rc.conf
+
+$fw_cmd l | $awk_cmd '{if ($1!="65535"){$1=ENVIRON["fw_cmd"]" add";print;}}' > $confdir/netustad.ipfw
+
+#==================
+#== Send Headers ==
+#==================
+./header
+
+echo "<h5>`$gettext_cmd "Firewall Configuration Saved"`</h5>"
+
+#=================
+#== Send Footer ==
+#=================
+./footer

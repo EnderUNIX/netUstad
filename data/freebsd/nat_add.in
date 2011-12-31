@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#================
+#== Do the job ==
+#================
+confdir=@config_dir@
+action=`echo $QUERY_STRING | $awk_cmd -F\& '{print $1}'`
+case $action in
+static)
+	publichost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/publichost=//`
+	privatehost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/privatehost=//`
+	echo "redirect_address $publichost $privatehost" >> $confdir/netustad.natd
+	;;
+vserver)
+	proto=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/proto=//`
+	publichost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/publichost=//`
+	publicport=`echo $QUERY_STRING | $awk_cmd -F\& '{print $4}' | $sed_cmd s/publicport=//`
+	privatehost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $5}' | $sed_cmd s/privatehost=//`
+	privateport=`echo $QUERY_STRING | $awk_cmd -F\& '{print $6}' | $sed_cmd s/privateport=//`
+	echo "redirect_port $proto $privatehost:$privateport $publichost:$publicport" >> $confdir/netustad.natd
+	;;
+esac
+
+#==================
+#== Call ShowNat ==
+#==================
+./shownat

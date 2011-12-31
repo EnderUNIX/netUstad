@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#================
+#== Do the job ==
+#================
+action=`echo $QUERY_STRING | $awk_cmd -F\& '{print $1}'`
+date >> /usr/local/etc/netustad/netustad.err
+case $action in
+dynamic)
+	proto=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/proto=//`
+	src_ip=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/src_ip=//`
+	src_port=`echo $QUERY_STRING | $awk_cmd -F\& '{print $4}' | $sed_cmd s/src_port=//`
+	if test "x" = "x$src_port"; then
+		src_port=""
+	else
+		src_port="--sport $src_port"
+	fi
+	dst_ip=`echo $QUERY_STRING | $awk_cmd -F\& '{print $5}' | $sed_cmd s/dst_ip=//`
+	dst_port=`echo $QUERY_STRING | $awk_cmd -F\& '{print $6}' | $sed_cmd s/dst_port=//`
+	if test "x" = "x$dst_port"; then
+		dst_port=""
+	else
+		dst_port="--dport $dst_port"
+	fi
+	map_ip=`echo $QUERY_STRING | $awk_cmd -F\& '{print $7}' | $sed_cmd s/map_ip=//`
+	if test "x$map_ip" = "xMASQUERADE"; then
+		$fw_cmd -t nat -A POSTROUTING -p $proto -s $src_ip $src_port -d $dst_ip $dst_port -j MASQUERADE
+	else
+		$fw_cmd -t nat -A POSTROUTING -p $proto -s $src_ip $src_port -d $dst_ip $dst_port -j SNAT --to $map_ip
+	fi
+	;;
+static)
+	publichost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/publichost=//`
+	privatehost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/privatehost=//`
+	$fw_cmd -t nat -A PREROUTING -d $publichost -j DNAT --to $privatehost
+	$fw_cmd -t nat -A POSTROUTING -s $privatehost -j SNAT --to $publichost
+	;;
+vserver)
+	proto=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/proto=//`
+	publichost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/publichost=//`
+	publicport=`echo $QUERY_STRING | $awk_cmd -F\& '{print $4}' | $sed_cmd s/publicport=//`
+	privatehost=`echo $QUERY_STRING | $awk_cmd -F\& '{print $5}' | $sed_cmd s/privatehost=//`
+	privateport=`echo $QUERY_STRING | $awk_cmd -F\& '{print $6}' | $sed_cmd s/privateport=//`
+	$fw_cmd -t nat -A PREROUTING -p $proto -d $publichost --dport $publicport -j DNAT --to $privatehost:$privateport
+	;;
+esac
+
+#==================
+#== Call ShowNat ==
+#==================
+./nat_table

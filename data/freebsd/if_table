@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#==================
+#== Send headers ==
+#==================
+./header
+
+#================
+#== Print Data ==
+#================
+echo "<h5>`$gettext_cmd "NetIf Table"`</h5>"
+echo "<table cellspacing=3 cellpadding=0>"
+echo "  <tr align=center class=header>"                                         
+echo "  <td class=editdelete><b>v</b></td>"                                     
+echo "  <td class=std><b>`$gettext_cmd "Name"`</b></td>"
+echo "  <td class=std><b>`$gettext_cmd "Mtu"`</b></td>"
+echo "  <td class=std><b>`$gettext_cmd "Address"`</b></td>"
+echo "  <td class=std><b>`$gettext_cmd "NetMask"`</b></td>"
+echo "  <td class=editdelete><b>v</b></td></tr>"
+$ifconfig_cmd -u | $awk_cmd -f if-parse
+echo "</table><br>"
+
+#=================
+#== Send footer ==
+#=================
+./footer

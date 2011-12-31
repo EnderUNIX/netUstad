@@ -1,0 +1,253 @@
+#!/usr/bin/awk -f
+BEGIN{sid=ENVIRON["server_sid"]}
+{  
+# =============================================
+# ====== Degiskenlerin Default Degerleri ======
+# =============================================
+proto_cmd = "cat proto.inc";
+ruleoption1_cmd = "cat ruleoption1.inc";
+ruleoption2_cmd = "cat ruleoption2.inc";
+action1_cmd = "cat action1.inc";
+action2_cmd = "cat action2.inc";
+
+if ($1 == "65535") {
+	on_link = "<td class=editdelete><img src='images/editor_static.png$"sid"' width=20 height=20 align=top border=0></td>";
+	son_link = "<td class=editdelete><img border=0 src='images/eraser_static.png$"sid"' width=20 height=20 align=top></td>";
+}
+else {
+	on_link = "<td class=editdelete><a href='edit?"$1"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>";
+	son_link = "<td class=editdelete><a href='JavaScript:del(\""$1"\")'><img border=0 src='images/eraser.png' width=20 height=20 align=top></a></td>";
+}
+
+kuralno = "<td>"$1"</td>";
+hitcounts = "<td align=center>"$2"<br>"$3"</td>";
+is_log = "<td>no</td>";
+proto = "";
+gonderen = "";
+gonderen_port = "";
+alici = "";
+alici_port = "";
+
+#======================
+#== kural parse etme ==
+#======================
+
+for (i=5; i<=NF; i++) {
+	#==============================
+	#== Log kelimesi geciyor mu? ==
+	#==============================
+	if ($i == "log") {
+		is_log = "<td>yes</td>";
+	}
+
+	#=============================
+	#== "from" ile ilgili kisim ==
+	#=============================
+	if ($i == "from") {
+		i++;
+		gonderen = "<td> "$i;
+		if ($i == "{") {
+			for (j=i+1; j<=NF; j++) {
+				gonderen = gonderen" "$j;
+				if ($j == "}") break
+			}
+			i = j;
+		}
+		else if ($i == "not") {
+			i++;
+			gonderen = gonderen" "$i
+		}
+		gonderen = gonderen"</td>";
+		i++;
+		if ($i == "to") {
+			gonderen_port = ""
+		}
+		else {
+			gonderen_port = $i;
+		}
+	}
+
+	#===========================
+	#== "to" ile ilgili kisim ==
+	#===========================
+	if ($i == "to") {
+		i++;
+		alici = "<td> "$i
+		if ($i == "{") {
+			for (j=i+1; j<=NF; j++) {
+				alici = alici" "$j;
+				if ($j == "}") break
+			}
+			i = j;
+		}
+		else if ($i == "not") {
+			i++;
+			alici = alici" "$i
+		}
+		alici = alici"</td>";
+		son_pozisyon = i;
+		i++;
+		if ($i == "dst-port") {
+			i++;
+			alici_port = $i;
+		}
+		else if ($i ~ "^[0-9]"){
+			alici_port = $i
+		} else {
+			alici_port = ""
+		}
+	}
+
+	#==========================
+	#== MAC ile ilgili kisim ==
+	#==========================
+	"sysctl net.link.ether.ipfw" | getline etherdemux
+	sayi = split (etherdemux, etherstat, " ");
+	if (etherstat[2] == 0) {
+		mac = "<td>"macyok"</td>"
+	}
+	else {
+		if ($i == "MAC") {
+			i++;
+			mac_to = $i
+			i++;
+			mac = "<td>MAC from "$i;
+			mac = mac" to "mac_to;
+		}
+		else {
+			mac = "<td>MAC from any to any</td>"
+		}
+	}
+	close("sysctl net.link.ether.ipfw");
+	
+};
+
+#================================
+#== Kural Parse Etme II. Asama ==
+#==  Dosya Bagimli Kontroller  ==
+#================================
+option = "<td>"
+islem = "<td>"
+for (x=3; x<=NF; x++) {
+	ruleoption1_cmd | getline ruleoptiontext1
+	ruleoption2_cmd | getline ruleoptiontext2
+	action1_cmd | getline actiontext1
+	action2_cmd | getline actiontext2
+       	proto_cmd | getline prototext
+	optionsayisi1 = split (ruleoptiontext1, ruleoptionlist1, " ");
+	optionsayisi2 = split (ruleoptiontext2, ruleoptionlist2, " ");
+	actionsayisi1 = split (actiontext1, actionlist1, " ");
+	actionsayisi2 = split (actiontext2, actionlist2, " ");
+        protosayisi = split (prototext, protolist, " ");
+	#============================
+	#== Parametresiz Optionlar ==
+	#============================
+	for (y=1; y<=optionsayisi1; y++) {
+		if (ruleoptionlist1[y] == $x) {
+			option = option""$x" "
+		}
+	}
+	#============================
+	#== Parametresiz Actionlar ==
+	#============================
+        for (y=1; y<=actionsayisi1; y++) {
+                if (actionlist1[y] == $x) {
+			if ($x=="allow") islem=islem"<img src='images/action_allow.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+			else if ($x=="deny") islem=islem"<img src='images/action_deny.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+			else if ($x=="check-state") islem=islem"<img src='images/action_checkstate.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+			else if ($x=="count") islem=islem"<img src='images/action_count.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+                        islem = islem""$x
+                }
+        }
+	#===========================
+	#== Parametreli Optionlar ==
+	#===========================
+	for (y=1; y<=optionsayisi2; y++) {
+		if (ruleoptionlist2[y] == $x) {
+			option = option""$x" "
+			x++;
+			option = option""$x" "
+		}
+	}
+	#===========================
+	#== Parametreli Actionlar ==
+	#===========================
+        for (y=1; y<=actionsayisi2; y++) {
+                if (actionlist2[y] == $x) {
+			if ($x=="unreach") islem=islem"<img src='images/action_unreach.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+			if ($x=="skipto") islem=islem"<img src='images/action_skipto.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+			if ($x=="pipe" || $x=="queue") islem=islem"<img src='images/action_pipequeue.png$"sid"' width=32 height=32 align=absmiddle border=0>"
+                        islem = islem""$x" "
+                        x++;
+                        islem = islem""$x
+                }
+        }
+	#=====================
+	#== Protokolu bulma ==
+	#=====================
+	for (y=1; y<=protosayisi; y++) {
+		if (protolist[y] == $x) { proto = protolist[y]; break }
+	}
+}
+close(ruleoption1_cmd);
+close(ruleoption2_cmd);
+close(action1_cmd);
+close(action2_cmd);
+close(proto_cmd);
+option = option"</td>";
+islem = islem"</td>";
+
+
+if (proto=="tcp" || proto=="udp" || proto=="ddp") {
+	if (gonderen_port!="" && gonderen_port!="54745") {
+		service_cmd = "cat /etc/services | awk -f service-parse -v portno=\""gonderen_port"/"proto"\"";
+		service_cmd | getline service_name;
+		if (service_name=="") {
+			gonderen_port = "<td>"gonderen_port"</td>";
+		} else {
+			gonderen_port = "<td>"service_name"</td>";
+		}
+		close(service_cmd);
+	} else if (gonderen_port=="54745") {
+		gonderen_port = "<td>netUstad</td>";
+	} else {
+		gonderen_port = "<td>any</td>";
+	}
+	if (alici_port!="" && alici_port!="54745") {
+		service_name = ""
+		service_cmd = "cat /etc/services | awk -f service-parse -v portno=\""alici_port"/"proto"\"";
+		service_cmd | getline service_name;
+		if (service_name=="") {
+			alici_port = "<td>"alici_port"</td>";
+		} else {
+			alici_port = "<td>"service_name"</td>";
+		}
+		close(service_cmd);
+	} else if (alici_port=="54745") {
+		alici_port = "<td>netUstad</td>";
+	} else {
+		alici_port = "<td>any</td>";
+	}
+} else {
+	gonderen_port = "<td>any</td>"
+	alici_port = "<td>any</td>"
+}
+
+if (gonderen == "") gonderen = "<td>&nbsp;</td>"
+if (alici == "") alici = "<td>&nbsp;</td>"
+if (proto == "") {
+	proto = "<td>&nbsp;</td>"
+} else {
+	proto = "<td>"proto"</td>"
+}
+if (mac == "") mac = "<td>&nbsp;</td>"
+if (option == "<td></td>") option = "<td>&nbsp;</td>"
+
+#===============================
+#== Elde Edilen Veriyi Yazdir ==
+#===============================
+if (NR %2 == 0) print "<tr class=a1>"
+else print "<tr class=a2>"
+print on_link,kuralno,proto,gonderen,gonderen_port,islem,alici,alici_port,\
+      option,is_log,hitcounts,son_link"</tr>"
+}

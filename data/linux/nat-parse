@@ -1,0 +1,369 @@
+#!/usr/bin/awk -f
+BEGIN{
+	possible=1
+	sid=ENVIRON["server_sid"]
+	chain=""
+	gettext_cmd=ENVIRON["gettext_cmd"]
+}
+{  
+ if ($1!="Chain" && $1!="num") {
+	# ============================
+	# ====== Default Values ======
+	# ============================
+
+	kuralno		= $1
+	paketsayisi	= $2
+	paketboyutu	= $3
+	action		= $4
+	if (length($5)>4) {
+		proto = substr($5,1,length($5)-2)
+		opt = substr($5,length($5)-1,length($5))
+		position=5;
+	} else {
+		proto	= $5
+		opt	= $6
+		position=6
+	}
+	gsub(/\ /,"",proto)
+
+	#=====================
+	#== input interface ==
+	#=====================
+	if ($(position+1) == "*") $(position+1) = "any"
+	if_in	= $(position+1)
+
+	#======================
+	#== output interface ==
+	#======================
+
+	if ($(position+2) == "*") $(position+2) = "any"
+	if_out	= $(position+2)
+
+	#=================
+	#== Source Addr ==
+	#=================
+	if ($(position+3) == "0.0.0.0/0") $(position+3)="anywhere"
+	src	= $(position+3)
+	spt	= "any"
+	if (proto == "tcp" || proto == "udp") {
+		if ($(position+6) ~ /^spt:/ || $(position+6) ~ /^spts:/) {
+			sub(/spt:/,"",$(position+6));
+			sub(/spts:/,"",$(position+6));
+			spt=$(position+6)
+			$(position+6)="";
+			$(position+5)="";
+		}
+	}
+
+	#======================
+	#== Destination Addr ==
+	#======================
+	if ($(position+4) == "0.0.0.0/0") $(position+4) = "anywhere"
+	dst	= $(position+4)
+	dpt	= "any"
+	if (proto == "tcp" || proto == "udp") {
+		if ($12 ~ /^dpt:/ || $(position+6) ~ /^dpts:/) {
+			sub(/dpt:/,"",$(position+6));
+			sub(/dpts:/,"",$(position+6));
+			dpt=$(position+6)
+			$(position+6)=""
+			$(position+5)=""
+		} else if ($(position+7) ~ /^dpt:/ || $(position+7) ~ /^dpts:/) {
+			sub(/dpt:/,"",$(position+7));
+			sub(/dpts:/,"",$(position+7));
+			dpt=$(position+7)
+			$(position+7)=""
+			$(position+5)=""
+		}
+	}
+
+
+	#=======================
+	#== Calculate Options ==
+	#=======================
+	eoption="";
+	for (i=(position+5); i<=NF; i++) {
+		if ($i~/to:/) {
+			sub(/to:/,"",$i)
+			split($i,private,":")!=2 
+		} else {
+			eoption=eoption" "$i;
+		}
+	}
+
+	#===========================
+	#== Print Calculated Data ==
+	#===========================
+	if (action=="DNAT" && (proto=="tcp" || proto=="udp")) {
+		virt_server[proto":"dst":"dpt]="<td>"tolower(proto)"</td>"\
+			      "<td>"dst"</td><td>"dpt"</td>"\
+			      "<td>-&gt;</td>"\
+			      "<td>"private[1]"</td><td>"private[2]"</td>"
+		chainlist[proto":"dst":"dpt]="\""chain"\",\""kuralno"\""
+	} else if (action=="MASQUERADE") {
+		dynamic_nat[proto":"src":"dst":"if_out]="<td>"tolower(proto)"</td>"\
+				"<td>"src"</td><td>"spt"</td>"\
+				"<td>-&gt;</td>"\
+				"<td>"dst"</td><td>"dpt"</td>"\
+				"<td>&lt;-&gt;</td>"\
+				"<td>MASQUERADE</td>"
+		chainlist[proto":"src":"dst":"if_out]="\""chain"\",\""kuralno"\""
+	} else if (action=="DNAT" && proto=="all" && dst!~/\//) {
+		static_nat[private[1]]="<td>"private[1]"</td><td>&lt;-&gt;</td><td>"dst"</td>"
+		chainlist[private[1]]="\""chain"\",\""kuralno"\""
+	} else if (action=="SNAT") {
+		if (src!~/\// && dst!~/\// && proto=="all" && !(src=="anywhere" && dst=="anywhere")) {
+			static_nat[src]="<td>"src"</td><td>&lt;-&gt;</td><td>"private[1]"</td>"
+			chainlist[src]="\""chain"\",\""kuralno"\""
+		} else {
+			dynamic_nat[proto":"src":"dst":"if_out]="<td>"tolower(proto)"</td>"\
+				"<td>"src"</td><td>"spt"</td>"\
+				"<td>-&gt;</td>"\
+				"<td>"dst"</td><td>"dpt"</td>"\
+				"<td>&lt;-&gt;</td>"\
+				"<td>"private[1]"</td>"
+			chainlist[proto":"src":"dst":"if_out]="\""chain"\",\""kuralno"\""
+		}
+	}
+ } else if ($1=="Chain"){
+	 chain=$2
+ }
+}
+END {
+ if (possible==1) {
+	dnat_cmd=gettext_cmd" \"Dynamic NAT\""
+		dnat_cmd | getline dnat_header
+	snat_cmd=gettext_cmd" \"Static NAT\"" 
+		snat_cmd | getline snat_header
+	vserv_cmd=gettext_cmd" \"Virtual Server\""
+		vserv_cmd | getline vserv_header
+
+
+	#=========================
+	#== Dynamic Nat Section ==
+	#=========================
+	i=0
+	print "<script language=\"JavaScript\" type=\"text/javascript\">"
+	print "function proto_check_vis()		// Check The Visibility of Fields According to Protocol keywords"
+	print "{"
+	print " document.getElementById('src_port').disabled=1;"
+	print " document.getElementById('src_port').value='';"
+	print " document.getElementById('dst_port').disabled=1;"
+	print " document.getElementById('dst_port').value='';"
+	print " if (document.getElementById('d_proto').value=='udp' || document.getElementById('d_proto').value=='tcp') "
+	print " { "
+	print "    document.getElementById('src_port').disabled=0;"
+	print "	   document.getElementById('dst_port').disabled=0;"
+	print " }"
+	print "}"
+	print "</script>"
+	print "<h5>"dnat_header"</h5>"
+	print "<table cellspacing=3 cellpadding=0>"
+	for (x in dynamic_nat) {
+		if (i%2 == 0) print "<tr class=a1>"
+		else print "<tr class=a2>"
+		print "<td class=editdelete><a href='nat_edit?"x"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>"
+		print dynamic_nat[x]
+		print "<td class=editdelete><a href='JavaScript:nat_del("chainlist[x]",\""x"\")'><img src='images/eraser.png' width=20 height=20 align=top border=0></a></td></tr>"
+		i++
+	}
+	if (i%2 == 0) print "<tr class=a1>"
+	else print "<tr class=a2>"
+	print "<td class=editdelete><a href='JavaScript:dynamic_add()'><img src='images/menu_addrule.png' width=20 height=20 align=top border=0></a></td>"
+	print "	<td><select name=\"d_proto\" id=\"d_proto\" onChange=\"proto_check_vis()\">"
+	print "		<option value=\"ip\" selected>ip</option>"
+	print "		<option value=\"tcp\">tcp</option>"
+	print "          <option value=\"udp\">udp</option>"
+	print "          <option value=\"icmp\">icmp</option>"
+	print "          <option value=\"igmp\">igmp</option>"
+	print "          <option value=\"ggp\">ggp</option>"
+	print "          <option value=\"ipencap\">ipencap</option>"
+	print "          <option value=\"st2\">st2</option>"
+	print "          <option value=\"cbt\">cbt</option>"
+	print "          <option value=\"egp\">egp</option>"
+	print "          <option value=\"igp\">igp</option>"
+	print "          <option value=\"bbn-rcc\">bbn-rcc</option>"
+	print "          <option value=\"nvp\">nvp</option>"
+	print "          <option value=\"pup\">pup</option>"
+	print "          <option value=\"argus\">argus</option>"
+	print "          <option value=\"emcon\">emcon</option>"
+	print "          <option value=\"xnet\">xnet</option>"
+	print "          <option value=\"chaos\">chaos</option>"
+	print "          <option value=\"mux\">mux</option>"
+	print "          <option value=\"dcn\">dcn</option>"
+	print "          <option value=\"hmp\">hmp</option>"
+	print "          <option value=\"prm\">prm</option>"
+	print "          <option value=\"xns-idp\">xns-idp</option>"
+	print "          <option value=\"trunk-1\">trunk-1</option>"
+	print "          <option value=\"trunk-2\">trunk-2</option>"
+	print "          <option value=\"leaf-1\">leaf-1</option>"
+	print "          <option value=\"leaf-2\">leaf-2</option>"
+	print "          <option value=\"rdp\">rdp</option>"
+	print "          <option value=\"irtp\">irtp</option>"
+	print "          <option value=\"iso-tp4\">iso-tp4</option>"
+	print "          <option value=\"netblt\">netblt</option>"
+	print "          <option value=\"mfe-nsp\">mfe-nsp</option>"
+	print "          <option value=\"merit-inp\">merit-inp</option>"
+	print "          <option value=\"sep\">sep</option>"
+	print "          <option value=\"3pc\">3pc</option>"
+	print "          <option value=\"idpr\">idpr</option>"
+	print "          <option value=\"xtp\">xtp</option>"
+	print "          <option value=\"ddp\">ddp</option>"
+	print "          <option value=\"idpr-cmtp\">idpr-cmtp</option>"
+	print "          <option value=\"tp++\">tp++</option>"
+	print "          <option value=\"il\">il</option>"
+	print "          <option value=\"ipv6\">ipv6</option>"
+	print "          <option value=\"sdrp\">sdrp</option>"
+	print "          <option value=\"ipv6-route\">ipv6-route</option>"
+	print "          <option value=\"ipv6-frag\">ipv6-frag</option>"
+	print "          <option value=\"idrp\">idrp</option>"
+	print "          <option value=\"rsvp\">rsvp</option>"
+	print "          <option value=\"gre\">gre</option>"
+	print "          <option value=\"mhrp\">mhrp</option>"
+	print "          <option value=\"bna\">bna</option>"
+	print "          <option value=\"esp\">esp</option>"
+	print "          <option value=\"ah\">ah</option>"
+	print "          <option value=\"i-nslp\">i-nslp</option>"
+	print "          <option value=\"swipe\">swipe</option>"
+	print "          <option value=\"narp\">narp</option>"
+	print "          <option value=\"mobile\">mobile</option>"
+	print "          <option value=\"tlsp\">tlsp</option>"
+	print "          <option value=\"skip\">skip</option>"
+	print "          <option value=\"ipv6-icmp\">ipv6-icmp</option>"
+	print "          <option value=\"ipv6-nonxt\">ipv6-nonxt</option>"
+	print "          <option value=\"ipv6-opts\">ipv6-opts</option>"
+	print "          <option value=\"cftp\">cftp</option>"
+	print "          <option value=\"sat-expak\">sat-expak</option>"
+	print "          <option value=\"kryptolan\">kryptolan</option>"
+	print "          <option value=\"rvd\">rvd</option>"
+	print "          <option value=\"ippc\">ippc</option>"
+	print "          <option value=\"sat-mon\">sat-mon</option>"
+	print "          <option value=\"visa\">visa</option>"
+	print "          <option value=\"ipcv\">ipcv</option>"
+	print "          <option value=\"cpnx\">cpnx</option>"
+	print "          <option value=\"cphb\">cphb</option>"
+	print "          <option value=\"wsn\">wsn</option>"
+	print "          <option value=\"pvp\">pvp</option>"
+	print "          <option value=\"br-sat-mon\">br-sat-mon</option>"
+	print "          <option value=\"sun-nd\">sun-nd</option>"
+	print "          <option value=\"wb-mon\">wb-mon</option>"
+	print "          <option value=\"wb-expak\">wb-expak</option>"
+	print "          <option value=\"iso-ip\">iso-ip</option>"
+	print "          <option value=\"vmtp\">vmtp</option>"
+	print "          <option value=\"secure-vmtp\">secure-vmtp</option>"
+	print "          <option value=\"vines\">vines</option>"
+	print "          <option value=\"ttp\">ttp</option>"
+	print "          <option value=\"nsfnet-igp\">nsfnet-igp</option>"
+	print "          <option value=\"dgp\">dgp</option>"
+	print "          <option value=\"tcf\">tcf</option>"
+	print "          <option value=\"eigrp\">eigrp</option>"
+	print "          <option value=\"ospf\">ospf</option>"
+	print "          <option value=\"sprite-rpc\">sprite-rpc</option>"
+	print "          <option value=\"larp\">larp</option>"
+	print "          <option value=\"mtp\">mtp</option>"
+	print "          <option value=\"ax.25\">ax.25</option>"
+	print "          <option value=\"ipip\">ipip</option>"
+	print "          <option value=\"mcip\">micp</option>"
+	print "          <option value=\"scc-sp\">scc-sp</option>"
+	print "          <option value=\"etherip\">etherip</option>"
+	print "          <option value=\"encap\">encap</option>"
+	print "          <option value=\"gmtp\">gmtp</option>"
+	print "          <option value=\"ifmp\">ifmp</option>"
+	print "          <option value=\"pnni\">pnni</option>"
+	print "          <option value=\"pim\">pim</option>"
+	print "          <option value=\"aris\">aris</option>"
+	print "          <option value=\"scps\">scps</option>"
+	print "          <option value=\"qnx\">qnx</option>"
+	print "          <option value=\"a/n\">a/n</option>"
+	print "          <option value=\"ipcomp\">ipcomp</option>"
+	print "          <option value=\"snp\">snp</option>"
+	print "          <option value=\"compaq-peer\">compaq-peer</option>"
+	print "          <option value=\"ipx-in-ip\">ipx-in-ip</option>"
+	print "          <option value=\"vrrp\">vrrp</option>"
+	print "          <option value=\"pgm\">pgm</option>"
+	print "          <option value=\"l2tp\">l2tp</option>"
+	print "          <option value=\"ddx\">ddx</option>"
+	print "          <option value=\"iatp\">iatp</option>"
+	print "          <option value=\"st\">st</option>"
+	print "          <option value=\"srp\">srp</option>"
+	print "          <option value=\"uti\">uti</option>"
+	print "          <option value=\"smp\">smp</option>"
+	print "          <option value=\"sm\">sm</option>"
+	print "          <option value=\"ptp\">ptp</option>"
+	print "          <option value=\"isis\">isis</option>"
+	print "          <option value=\"fire\">fire</option>"
+	print "          <option value=\"crtp\">crtp</option>"
+	print "          <option value=\"crudp\">crudp</option>"
+	print "          <option value=\"sscopmce\">sscopmce</option>"
+	print "          <option value=\"iplt\">iplt</option>"
+	print "          <option value=\"sps\">sps</option>"
+	print "          <option value=\"pipe\">pipe</option>"
+	print "          <option value=\"sctp\">sctp</option>"
+	print "          <option value=\"fc\">fc</option>"
+	print "          <option value=\"divert\">divert</option>"
+	print "        </select></td>"
+	print "<td><input type=\"text\" name=\"src_ip\" id=\"src_ip\" value=\"0.0.0.0\" size=15 maxlength=15></td>"
+	print "<td><input type=\"text\" name=\"src_port\" id=\"src_port\" size=5 maxlength=5 disabled></td>"
+	print "<td>-&gt;</td>"
+	print "<td><input type=\"text\" name=\"dst_ip\" id=\"dst_ip\" value=\"0.0.0.0\"size=15 maxlength=15></td>"
+	print "<td><input type=\"text\" name=\"dst_port\" id=\"dst_port\" size=5 maxlength=5 disabled></td>"
+	print "<td>&lt;-&gt;</td>"
+	print "<td><input type=\"text\" name=\"map_ip\" id=\"map_ip\" value=\"0.0.0.0\"size=15 maxlength=15></td>"
+	print "<td class=editdelete><img src='images/eraser_static.png$"sid"' width=20 height=20 align=top border=0></td></tr>"
+	print "</table>"
+
+
+	#========================
+	#== Static Nat Section ==
+	#========================
+	i=0
+	print "<h5>"snat_header"</h5>"
+	print "<table cellspacing=3 cellpadding=0>"
+	for (x in static_nat) {
+		if (i%2 == 0) print "<tr class=a1>"
+		else print "<tr class=a2>"
+		print "<td class=editdelete><a href='nat_edit?"x"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>"
+		print static_nat[x]
+		print "<td class=editdelete><a href='JavaScript:nat_del("chainlist[x]",\""x"\")'><img src='images/eraser.png' width=20 height=20 align=top border=0></a></td></tr>"
+		i++
+	}
+	if (i%2 == 0) print "<tr class=a1>"
+	else print "<tr class=a2>"
+	print "<td class=editdelete><a href='JavaScript:static_add()'><img src='images/menu_addrule.png' width=20 height=20 align=top border=0></a></td>"
+	print "<td><input type=\"text\" name=\"local_ip\" id=\"local_ip\" size=15 maxlength=15></td>"
+	print "<td>&lt;-&gt;</td>"
+	print "<td><input type=\"text\" name=\"static_ip\" id=\"static_ip\" size=15 maxlength=15></td>"
+	print "<td class=editdelete><img src='images/eraser_static.png$"sid"' width=20 height=20 align=top border=0></td></tr>"
+	print "</table>"
+
+
+	#============================
+	#== Virtual Server Section ==
+	#============================
+	i=0
+	print "<h5>"vserv_header"</h5>"
+	print "<table cellspacing=3 cellpadding=0>"
+	for (x in virt_server) {
+		if (i%2 == 0) print "<tr class=a1>"
+		else print "<tr class=a2>"
+		print "<td class=editdelete><a href='nat_edit?"x"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>"
+		print virt_server[x]
+		print "<td class=editdelete><a href='JavaScript:nat_del("chainlist[x]",\""x"\")'><img src='images/eraser.png' width=20 height=20 align=top border=0></a></td></tr>"
+		i++
+	}
+	if (i%2 == 0) print "<tr class=a1>"
+	else print "<tr class=a2>"
+	print "<td class=editdelete><a href='JavaScript:vserv_add()'><img src='images/menu_addrule.png' width=20 height=20 align=top border=0></a></td>"
+	print "<td><select name=proto id=proto><option value=tcp selected>tcp</option><option value=udp>udp</option></select></td>"
+	print "<td><input type=\"text\" name=\"publichost\" id=\"publichost\" size=15 maxlength=15></td>"
+	print "<td><input type=\"text\" name=\"publicport\" id=\"publicport\" size=5 maxlength=5></td>"
+	print "<td>-&gt;</td>"
+	print "<td><input type=\"text\" name=\"privatehost\" id=\"privatehost\" size=15 maxlength=15></td>"
+	print "<td><input type=\"text\" name=\"privateport\" id=\"privateport\" size=5 maxlength=5></td>"
+	print "<td class=editdelete><img src='images/eraser_static.png$"sid"' width=20 height=20 align=top border=0></td></tr>"
+	print "</table>"
+	close(dnat_cmd)
+	close(snat_cmd)
+	close(vserv_cmd)
+ }
+}

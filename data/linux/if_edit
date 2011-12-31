@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+action=`echo $QUERY_STRING | $awk_cmd -F\& '{print $1}'`
+if test "x$action" = "xapply"; then
+	interface=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/intf=//`
+	mtu=`echo $QUERY_STRING | $awk_cmd -F\& '{print $3}' | $sed_cmd s/mtu=//`
+	addr=`echo $QUERY_STRING | $awk_cmd -F\& '{print $4}' | $sed_cmd s/addr=//`
+	netmask=`echo $QUERY_STRING | $awk_cmd -F\& '{print $5}' | $sed_cmd s/netmask=//`
+	$ifconfig_cmd $interface inet $addr netmask $netmask mtu $mtu
+	./if_table
+else
+	interface=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/intf=//`
+	export interface
+
+	#==================
+	#== Send headers ==
+	#==================
+	./header
+
+	#================
+	#== Print Data ==
+	#================
+	echo '<script language="JavaScript" type="text/javascript">'
+	echo "function apply() {"
+	echo "  mtu= document.getElementById('mtu').value;"
+	echo "  addr=document.getElementById('addr').value;"
+	echo "  netmask=document.getElementById('netmask').value;"
+	echo "  if (mtu!='' && addr!='' && netmask!='') {"
+	echo "     window.location='if_edit?apply&intf=$interface&mtu='+mtu+'&addr='+addr+'&netmask='+netmask+'"'$'$server_sid"';"
+	echo "  } else {"
+	echo "     alert('`$gettext_cmd "Do not leave fields empty."`'); }"
+	echo "}"
+	echo "</script>"
+	echo " "
+	echo "<h5>`$gettext_cmd "NetIf Table"`</h5>"
+	echo "<table cellspacing=3 cellpadding=0>"
+	echo "  <tr align=center class=header>"                                         
+	echo "  <td class=editdelete><b>v</b></td>"                                     
+	echo "  <td class=std><b>`$gettext_cmd "Name"`</b></td>"
+	echo "  <td class=std><b>`$gettext_cmd "Mtu"`</b></td>"
+	echo "  <td class=std><b>`$gettext_cmd "Address"`</b></td>"
+	echo "  <td class=std><b>`$gettext_cmd "NetMask"`</b></td>"
+	echo "  <td class=editdelete><b>v</b></td></tr>"
+	$ifconfig_cmd | $awk_cmd -f if-edit
+	echo "</table><br>"
+
+	#=================
+	#== Send footer ==
+	#=================
+	./footer
+fi

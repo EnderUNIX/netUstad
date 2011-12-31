@@ -1,0 +1,87 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+
+cd  "$work_path"
+
+
+# ==================
+# == Send Headers ==
+# ==================
+./header
+
+
+# ======================
+# == Define Variables ==
+# ======================
+
+tbl_header_num="#"
+tbl_header_paket=`$gettext_cmd "Packet"`
+tbl_header_byte=`$gettext_cmd "Byte"`
+tbl_header_action=`$gettext_cmd "Action"`
+tbl_header_proto=`$gettext_cmd "Proto"`
+tbl_header_opt=`$gettext_cmd "Opt"`
+tbl_header_in=`$gettext_cmd "In"`
+tbl_header_out=`$gettext_cmd "Out"`
+tbl_header_src=`$gettext_cmd "Source"`
+tbl_header_spt=`$gettext_cmd "S.Port"`
+tbl_header_dst=`$gettext_cmd "Destination"`
+tbl_header_dpt=`$gettext_cmd "D.Port"`
+tbl_header_eoptions=`$gettext_cmd "ExtraOptions"`
+
+# ======================
+# == List Chain Rules ==
+# ======================
+
+for CHAIN in `$fw_cmd -L -n|$grep_cmd Chain|$awk_cmd '{print $2}'`; 
+	do
+		case "$CHAIN" in 
+			INPUT|OUTPUT|FORWARD)
+			        	policy=`$fw_cmd -L $CHAIN -n| $grep_cmd policy | $awk_cmd '{sub(/\)/,"",$4); print $4}'`
+        				echo "<h5> "`$gettext_cmd "Chain"`": "$CHAIN" ("`$gettext_cmd "Policy"`": "$policy")</h5>"
+						;;
+			*) 
+				echo "<h5> "`$gettext_cmd "User Defined Chain"`": "$CHAIN"</h5>"
+				;;
+		esac
+
+		echo "<table border=0>"
+        echo "<tr align=center class=header><td></td>\
+                <td><b>$tbl_header_num</b></td>\
+                <td><b>$tbl_header_paket</b></td>\
+                <td><b>$tbl_header_byte</b></td>\
+                <td><b>$tbl_header_proto</b></td>\
+                <td><b>$tbl_header_opt</b></td>\
+                <td><b>$tbl_header_in</b></td>\
+                <td><b>$tbl_header_out</b></td>\
+                <td><b>$tbl_header_src</b></td>\
+                <td><b>$tbl_header_spt</b></td>\
+                <td><b>$tbl_header_action</b></td>\
+                <td><b>$tbl_header_dst</b></td>\
+                <td><b>$tbl_header_dpt</b></td>\
+                <td><b>$tbl_header_eoptions</b></td>\
+                <td></td></tr>"
+		export CHAIN=$CHAIN
+        echo `$fw_cmd -L $CHAIN --line-numbers -v | $grep_cmd -v -E "Chain|destination" | $awk_cmd -f chain-parse`
+        echo "</table>"
+done
+
+# =========================
+# == Write Configuration ==
+# =========================
+echo "<br>"
+echo '<input name="add" type=button value="'"`$gettext_cmd "Add Rule" `"'" onClick="window.location='"'"'addform$'$server_sid"'"'" class=btn>'
+echo '&nbsp;<input name="write" type=button value="'"`$gettext_cmd "Write Configuration" `"'" onClick="window.location='"'"'write$'$server_sid"'"'" class=btn>'
+echo "<br><br>"
+
+
+# =====================
+# == Closing Headers ==
+# =====================
+./footer

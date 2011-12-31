@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+chain=`echo $QUERY_STRING | $awk_cmd -F\& '{print $1}' | $sed_cmd s/chain=//`
+num=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/num=//`
+${fw_cmd} -t nat -D $chain $num
+./nat_table

@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#==================
+#== Send headers ==
+#==================
+./header
+
+#================
+#== Do the job ==
+#================
+dest=`echo $QUERY_STRING | $awk_cmd -F\& '{print $1}' | $sed_cmd s/dest=//`
+gw=`echo $QUERY_STRING | $awk_cmd -F\& '{print $2}' | $sed_cmd s/gw=//`
+$route_cmd add $dest $gw > /dev/null
+errcode=$?
+
+#================
+#== Print Data ==
+#================
+
+echo '<script language="JavaScript" type="text/javascript">'
+echo "function rt_del(dest)"
+echo "{ if (confirm('`$gettext_cmd "Route"`: '+dest+' `$gettext_cmd "will be deleted. Is it Okay?"`')) window.location='rt_del?'+dest+'"'$'$server_sid"' }"
+echo "function rt_add()"
+echo "{ destination= document.getElementById('dest').value;"
+echo "  gateway=document.getElementById('gw').value;"
+echo "  if (destination!='' && gateway!='') {"
+echo "     window.location='rt_add?dest='+destination+'&gw='+gateway+'"'$'$server_sid"';"
+echo "  } else {"
+echo "     alert('`$gettext_cmd "Destination and Gateway fields cannot be empty."`'); return(0); }"
+echo "}"
+echo "</script>"
+echo " "
+if test $errcode -eq 0; then
+	echo "<b>`$gettext_cmd "Route"` $dest gateway $gw `$gettext_cmd "added successfully"`.</b>"
+else
+	echo "<b>`$gettext_cmd "Route couldn't be added."`"
+fi
+echo "<h5>`$gettext_cmd "Routing Table"`</h5>"
+echo "<table cellspacing=3 cellpadding=0>"
+echo "  <tr align=center class=header>"                                         
+echo "  <td class=editdelete><b>v</b></td>"                                     
+echo "  <td class=std><b>`$gettext_cmd "Destination"`</b></td>"                           
+echo "  <td class=std><b>`$gettext_cmd "Gateway"`</b></td>"                           
+echo "  <td class=std><b>`$gettext_cmd "Flags"`</b></td>"                           
+echo "  <td class=std><b>`$gettext_cmd "NetIf"`</b></td>"                           
+echo "  <td class=editdelete><b>v</b></td></tr>"                                
+$netstat_cmd -rn -f inet | $awk_cmd -f rt-parse
+echo "</table><br>"
+
+#=================
+#== Send footer ==
+#=================
+./footer

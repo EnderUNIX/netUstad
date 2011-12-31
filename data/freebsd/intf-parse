@@ -1,0 +1,13 @@
+{
+ # =====================================================
+ # == Get Interface List Then Add Them To Select Form ==
+ # =====================================================
+ intf_cmd = "/sbin/ifconfig -lu"
+ 
+ intf_cmd | getline intftext
+ intfsayisi = split (intftext,intflist, " ");
+ for (y=1; y<=intfsayisi; y++) {
+         print "eval('document.rulebody.via.options["y-1"]= new Option(\""intflist[y]"\", \""intflist[y]"\")');";
+ }
+ close(intf_cmd);
+}

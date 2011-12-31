@@ -1,0 +1,70 @@
+body {
+	background: url(images/bg.png);
+	font : 7pt Verdana, Geneva, Arial, Helvetica, sans-serif;
+	margin : 0px 0px 0px 0px;
+	padding : 0px 0px 0px 0px;
+}
+
+h5 { font-size : 9pt; }
+
+table,td {
+	font-size : 7pt; 
+	border : 2px solid #C0C8D0;
+	padding: 2px 2px 2px 2px;
+}
+
+table{
+	border: 3px solid #8080A0;
+}
+
+.std{
+	border: none;
+	padding: 0 0 0 0;
+}
+
+#hdr1{
+	text-align:center;
+	font-size: 14pt;
+	font-weight: bold;
+	color: #804060;
+}
+
+#hdr2{
+	text-align:center;
+	font-size: 10pt;
+	color: #804060;
+}
+
+.a1 { background: #E9E5E9; }
+.a2 { background: #E2DDE2 }
+.header { background: #8080A0; color: white; border : 2px solid #C0C8D0;}
+.editdelete {
+	background: #DBE0E4;
+	color: black;
+	border: none;
+}
+
+a{
+	color : navy;
+	text-decoration: none;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+
+input,select,option{
+	border: 2px solid #8080A0;
+	background: white;
+	font-weight: normal;
+	font : 8pt Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+input.btn{
+	border: 3px solid black;
+	background: url(images/btn_bg.png) #405057;
+	color: #FFEFF7;
+	font-weight : bold;
+	padding: 2px 2px 2px 2px;
+}
+

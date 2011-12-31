@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+
+# ======================
+# == Global Variables ==
+# ======================
+cd  $work_path
+
+# ==================
+# == Send Headers ==
+# ==================
+./header
+
+# ==========
+# == Body ==
+# ==========
+./editform.content
+echo "<script language="JavaScript" type="text/javascript">"
+./intf-parse
+$fw_cmd -L $chain --line-numbers -v | $awk_cmd '{if ($1==ENVIRON["ruleno"]) print}' | $awk_cmd -f edit-parse -v chain=$chain
+echo "client_sid="'"'$server_sid'"'";"
+echo "</script>"
+
+# ==================
+# == Closing Tags ==
+# ==================
+./footer

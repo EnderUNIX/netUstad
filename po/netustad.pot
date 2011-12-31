@@ -1,0 +1,532 @@
+# translation of netUstad.
+# Copyright (C) 2004 Ozkan KIRIK - EnderUNIX SDT
+# This file is distributed under the same license as the netUstad package.
+#  <>, 2004.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: netUstad LINUX-0.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-08-24 16:42+0300\n"
+"PO-Revision-Date: 2004-08-24 22:03+0300\n"
+"Last-Translator: Ozkan KIRIK (ozkan@enderunix.org) & Mehmet Onur YALAZI <onur.yalazi@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Character Set
+msgid "charset"
+msgstr "ISO-8859-1"
+
+msgid ""
+"Copyright (C) 2004  by Ozkan KIRIK\n"
+"\n"
+msgstr ""
+
+msgid ""
+"Version: %s\n"
+"\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Listening port %d\n"
+msgstr ""
+
+msgid ""
+"\n"
+"netUstad is started\n"
+"Listening port %d\n"
+msgstr ""
+
+msgid ""
+"\n"
+"netUstad: Invalid Argument\n"
+"\n"
+msgstr ""
+
+msgid ""
+"\n"
+"netUstad: Invalid Number Of Arguments\n"
+"\n"
+msgstr ""
+
+msgid ""
+"\n"
+"netUstad: Network Ustadi (Network Master)\n"
+msgstr ""
+
+msgid "Copyright (C) 2004   by Ozkan KIRIK\n"
+msgstr ""
+
+msgid "File not found: %s"
+msgstr ""
+
+msgid "Invalid Username or Password"
+msgstr ""
+
+msgid "Options:\n"
+msgstr ""
+
+msgid "Session Expired!"
+msgstr ""
+
+msgid "Usage: netustad [options]\n"
+msgstr ""
+
+msgid "You are logged out"
+msgstr ""
+
+msgid "You are not logged in!"
+msgstr ""
+
+msgid "\t-c\tUse following parameter as configuration file"
+msgstr ""
+
+msgid "\t-h\tShow this help screen\n"
+msgstr ""
+
+msgid "\t-v\tShow version\n"
+msgstr ""
+
+msgid "netUstad is started\n"
+msgstr ""
+
+msgid "setlocale failed\n"
+msgstr ""
+
+msgid ""
+"Configuration reloaded successfully.\n"
+"\n"
+msgstr ""
+
+msgid ""
+"Ready for requests...\n"
+"\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Closing active sessions...\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Program Terminated.\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Reloading configuration...\n"
+"\n"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Action:"
+msgstr ""
+
+msgid "Add Rule"
+msgstr ""
+
+msgid "Additional Options:"
+msgstr ""
+
+msgid "Administrator logged in\n"
+msgstr ""
+
+msgid "Administrator logged out\n"
+msgstr ""
+
+msgid "Administrator's Session Expired!\n"
+msgstr ""
+
+msgid "Auth Failure: Invalid Password"
+msgstr ""
+
+msgid "Auth Failure: Invalid Username"
+msgstr ""
+
+msgid "Auth Failure: Long user or password.\n"
+msgstr ""
+
+msgid "Bind error\n"
+msgstr ""
+
+msgid "Bye bye\n"
+msgstr ""
+
+msgid "Byte"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Cannot Create Session!\n"
+msgstr ""
+
+msgid "Chain Name"
+msgstr ""
+
+msgid "Chain"
+msgstr ""
+
+msgid "D.Port"
+msgstr ""
+
+msgid "Deleted Rule"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Destination Address can not be empty"
+msgstr ""
+
+msgid "Destination Address"
+msgstr ""
+
+msgid "Destination Address:"
+msgstr ""
+
+msgid "Destination Port Range"
+msgstr ""
+
+msgid "Destination Port Range:"
+msgstr ""
+
+msgid "Destination"
+msgstr ""
+
+msgid "Divert-Tee Port/Pipe-Queue No:"
+msgstr ""
+
+msgid "Edit Complete"
+msgstr ""
+
+msgid "Edit Rule"
+msgstr ""
+
+msgid "Edit Rule:"
+msgstr ""
+
+msgid "ExtraOptions"
+msgstr ""
+
+msgid "File size limit exceeded"
+msgstr ""
+
+msgid "Firewall Configuration Saved"
+msgstr ""
+
+msgid "Fragmented"
+msgstr ""
+
+msgid "Fwd Address"
+msgstr ""
+
+msgid "Getsockname error\n"
+msgstr ""
+
+msgid "Hangup signal catched"
+msgstr ""
+
+msgid "ICMP Types"
+msgstr ""
+
+msgid "ICMP Types:"
+msgstr ""
+
+msgid "IP Options:"
+msgstr ""
+
+msgid "In"
+msgstr ""
+
+msgid "Input Interface"
+msgstr ""
+
+msgid "Invalid Logamount Value"
+msgstr ""
+
+msgid "Invalid Port or Pipe Number!"
+msgstr ""
+
+msgid "Invalid Probablity"
+msgstr ""
+
+msgid "Invalid Rule Number To Skip"
+msgstr ""
+
+msgid "Invalid Rule Number"
+msgstr ""
+
+msgid "Listen error\n"
+msgstr ""
+
+msgid "Log IP Options"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "Log Prefix"
+msgstr ""
+
+msgid "Log TCP Options"
+msgstr ""
+
+msgid "Log TCP Sequence"
+msgstr ""
+
+msgid "Log"
+msgstr ""
+
+msgid "Logamount:"
+msgstr ""
+
+msgid "Logging Level"
+msgstr ""
+
+msgid "Logging"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "No Mac"
+msgstr ""
+
+msgid "Opt"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Out"
+msgstr ""
+
+msgid "Output Interface"
+msgstr ""
+
+msgid "Packet Direction:"
+msgstr ""
+
+msgid "Packet"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Please Enter Your<br>Username and Password"
+msgstr ""
+
+msgid "Policy"
+msgstr ""
+
+msgid "Probablity"
+msgstr ""
+
+msgid "Proto"
+msgstr ""
+
+msgid "Protocol"
+msgstr ""
+
+msgid "Protocol:"
+msgstr ""
+
+msgid "Redirecting to Rule List"
+msgstr ""
+
+msgid "Delete Rule:"
+msgstr ""
+
+msgid "Reject-With"
+msgstr ""
+
+msgid "Replaced with"
+msgstr ""
+
+msgid "Rule Hits"
+msgstr ""
+
+msgid "Rule List"
+msgstr ""
+
+msgid "Rule No"
+msgstr ""
+
+msgid "Rule No:"
+msgstr ""
+
+msgid "Rule added"
+msgstr ""
+
+msgid "Rule is added"
+msgstr ""
+
+msgid "Rule"
+msgstr ""
+
+msgid "RuleNo"
+msgstr ""
+
+msgid "S.Port"
+msgstr ""
+
+msgid "SSL Certificate file could not be found!\n"
+msgstr ""
+
+msgid "SSL Private Key does not match certificate public key!\n"
+msgstr ""
+
+msgid "SSL Private Key file could not be found!\n"
+msgstr ""
+
+msgid "Session Killed Because of Bad Request\n"
+msgstr ""
+
+msgid "Skip To:"
+msgstr ""
+
+msgid "Socket error\n"
+msgstr ""
+
+msgid "Source Address can not be empty"
+msgstr ""
+
+msgid "Source Address"
+msgstr ""
+
+msgid "Source Address:"
+msgstr ""
+
+msgid "Source Port Range"
+msgstr ""
+
+msgid "Source Port Range:"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "State Match"
+msgstr ""
+
+msgid "Statefull Rules"
+msgstr ""
+
+msgid "Static Rules"
+msgstr ""
+
+msgid "Submit Rule"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "T.Port"
+msgstr ""
+
+msgid "TCP Flags"
+msgstr ""
+
+msgid "TCP Flags:"
+msgstr ""
+
+msgid "TCP Options:"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
+msgid "Terminate signal catched"
+msgstr ""
+
+msgid "The Request is"
+msgstr ""
+
+msgid "Unreach Code:"
+msgstr ""
+
+msgid "User Defined Chain"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Via:"
+msgstr ""
+
+msgid "administration panel"
+msgstr ""
+
+msgid "is deleted"
+msgstr ""
+
+msgid "is replaced with"
+msgstr ""
+
+msgid "login panel"
+msgstr ""
+
+msgid "netUstad is already running!\n"
+msgstr ""
+
+msgid "other"
+msgstr ""
+
+msgid "will be deleted. Is it Okay?"
+msgstr ""
+
+msgid "Bad Request From"
+msgstr ""
+
+msgid "Statistics"
+msgstr ""
+
+msgid "Routing Table"
+msgstr ""
+
+msgid "NetIf Table"
+msgstr ""
+
+msgid "Write Configuration"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+msgid "Gateway"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Flags"
+msgstr ""
+
+msgid "NetIf"
+msgstr ""
+
+msgid "Dynamic NAT"
+msgstr ""
+
+msgid "Static NAT"
+msgstr ""
+
+msgid "Virtual Server"
+msgstr ""
+
+msgid "NAT Table"
+msgstr ""
+
+msgid "Under Construction"
+msgstr ""

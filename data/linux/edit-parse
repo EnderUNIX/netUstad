@@ -1,0 +1,218 @@
+{  
+# =============================
+# ===== Parsing Rule Body =====
+# =============================
+tcpflagstat	= "0";
+icmptypestat	= "0";
+NEW		= "0";
+ESTABLISHED	= "0";
+RELATED		= "0";
+INVALID		= "0";
+level		= "0";
+tcp_seq		= "0";
+tcp_opt		= "0";
+ip_opt		= "0";
+prefix		= "0";
+kuralno		= $1;
+islem		= $4;
+if (length($5)>4) {
+	proto	= substr($5,1,length($5)-2);
+	opt	= substr($5,length($5)-1,length($5));
+	position= 5;
+} else {
+	proto	= $5;
+	opt	= $6;
+	position= 6;
+}
+if_in		= $(position+1);
+if_out		= $(position+2);
+srcaddr		= $(position+3);
+dstaddr		= $(position+4);
+
+if (opt == "-f") frag = "1"
+else frag = "0"
+
+if (proto == "tcp" || proto == "udp" || proto == "ddp") {
+        if ($(position+6) ~ /^spt:/ || $(position+6) ~ /^spts:/) {
+                sub(/spt:/,"",$(position+6));
+                sub(/spts:/,"",$(position+6));
+                srcport = $(position+6);
+		srcportstat = "1";
+                $(position+6)="";
+                $(position+5)="";
+        } else {
+		srcportstat = "0";
+		srcport = " ";
+	}
+        if ($(position+6) ~ /^dpt:/ || $(position+6) ~ /^dpts:/) {
+                sub(/dpt:/,"",$(position+6));
+                sub(/dpts:/,"",$(position+6));
+                dstport=$(position+6);
+		dstportstat = "1";
+                $(position+6)="";
+                $(position+5)="";
+        } else if ($(position+7) ~ /^dpt:/ || $(position+7) ~ /^dpts:/) {
+                sub(/dpt:/,"",$(position+7));
+                sub(/dpts:/,"",$(position+7));
+                dstport=$(position+7);
+		dstportstat = "1";
+                $(position+7)="";
+                $(position+5)="";
+        } else {
+		dstportstat = "0";
+		dstport = " ";
+	}
+} else {
+	srcportstat = "0";
+	srcport = " ";
+	dstportstat = "0";
+	dstport = " ";
+}
+
+
+#===================
+#== Parse Options ==
+#===================
+
+for (i=(position+5) ; i<=NF; i++) {
+	if ($i == "state") {
+		i++;
+		if (index($i,"NEW")!=0) NEW="1";
+		if (index($i,"ESTABLISHED")!=0) ESTABLISHED="1";
+		if (index($i,"RELATED")!=0) RELATED="1";
+		if (index($i,"INVALID")!=0) INVALID="1";
+	}
+        if ($i == "LOG") {
+		i++;
+		if (index($i,"level")!=0) {
+			i++;
+			level=toupper($i);
+			i++;
+		}
+		if (index($i,"tcp-sequence")!=0) {
+			i++;
+			tcp_seq="1";
+		}
+		if (index($i,"tcp-options")!=0) {
+			i++;
+			tcp_opt="1";
+		}
+		if (index($i,"ip-options")!=0) {
+			i++;
+			ip_opt="1";
+		}
+		if (index($i,"prefix")!=0) {
+			i++;
+			gsub(/'|`/,"",$i);
+			prefix=$i;
+			i++;
+		}
+	}
+	if ($i == "reject-with") {
+		i++;
+		print "locate_select_index('reject_with','"$i"')";
+		i++;
+	}
+	if ($i == "icmp" && proto == "icmp") {
+		icmptypestat = "1";
+		i++;
+		icmp_type = $i;
+		i++;
+	}
+};
+
+#=================================
+#== Send The Values Of The Form ==
+#=================================
+print "function locate_select_index(selectid, s_value) {";
+print "for (i = 0;i<document.getElementById(selectid).length;i++) {";
+print "\t if (document.getElementById(selectid)[i].value == s_value) {";
+print "\t \t document.getElementById(selectid).selectedIndex = i;";
+print "\t \t break;";
+print "\t }";
+print "}";
+print "}";
+print " ";
+
+if (if_in != "any") {
+	print "locate_select_index('if_in','"if_in"')";
+	print "document.getElementById('if_in_stat').checked=1";
+	print "document.getElementById('if_in').disabled=0";
+}
+if (if_out != "any") {
+	print "locate_select_index('if_out','"if_out"')";
+	print "document.getElementById('if_out_stat').checked=1";
+	print "document.getElementById('if_out').disabled=0";
+}
+print "locate_select_index('chain','"chain"')";
+print "document.getElementById('rule_no').value='"kuralno"';";
+print "locate_select_index('action','"islem"');";
+if (islem == "unreach") 
+	print "locate_select_index('unreach_code','"unreach"');";
+
+print "locate_select_index('protocol','"proto"');";
+if (proto == "icmp") {
+	print "document.getElementById('icmp_type_stat').checked="icmptypestat";";
+	if (icmptypestat == "1") {
+		print "document.getElementById('icmp_type').disabled=0;";
+		print "locate_select_index('icmp_type','"icmp_type"');"; 
+	}
+}
+else if (proto == "udp") {
+	print "document.getElementById('dst_port_stat').checked="dstportstat";";
+	if (dstportstat =="1") {
+		print "document.getElementById('dst_port').disabled=0;";
+		print "document.getElementById('dst_port').value='"dstport"';";
+	}
+}
+else if (proto == "tcp") {
+	print "document.getElementById('tcp_flags_stat').checked="tcpflagstat";";
+	if (tcpflagstat == "1") {
+		print "document.getElementById('tcp_flags').disabled=0;";
+		print "locate_select_index('tcp_flags','"tcpflag"');";
+	}
+	print "document.getElementById('src_port_stat').checked="srcportstat";";
+	if (srcportstat == "1") {
+		print "document.getElementById('src_port').disabled=0;";
+		print "document.getElementById('src_port').value='"srcport"';";
+	}
+	print "document.getElementById('dst_port_stat').checked="dstportstat";";
+	if (dstportstat == "1") {
+		print "document.getElementById('dst_port').disabled=0;";
+		print "document.getElementById('dst_port').value='"dstport"';";
+	}
+}
+print "document.getElementById('NEW').checked="NEW";";
+print "document.getElementById('ESTABLISHED').checked="ESTABLISHED";";
+print "document.getElementById('RELATED').checked="RELATED";";
+print "document.getElementById('INVALID').checked="INVALID";";
+if (level!="0") {
+	print "document.getElementById('log_level_stat').checked=1";
+	print "document.getElementById('log_level').disabled=0";
+	print "locate_select_index('log_level','"level"')";
+	print "document.getElementById('log_tcp_seq').checked="tcp_seq;
+	print "document.getElementById('log_tcp_opt').checked="tcp_opt;
+	print "document.getElementById('log_ip_opt').checked="ip_opt;
+	if (prefix!="0") {
+		print "document.getElementById('log_prefix_stat').checked=1";
+		print "document.getElementById('log_prefix').disabled=0";
+		print "document.getElementById('log_prefix').value='"prefix"'";
+	}
+}
+
+print "document.getElementById('src_addr').value='"srcaddr"';";
+if (srcaddr != "anywhere") {
+	print "document.getElementById('src_addr').disabled=0;";
+	print "document.rulebody.src_addr_stat[1].checked=1;";
+}
+
+print "document.getElementById('dst_addr').value='"dstaddr"';";
+if (dstaddr != "anywhere") {
+	print "document.getElementById('dst_addr').disabled=0;";
+	print "document.rulebody.dst_addr_stat[1].checked=1;";
+}
+
+print "document.getElementById('frag_stat').checked="frag";";
+print "action_check_vis();";
+print "proto_check_vis();";
+}

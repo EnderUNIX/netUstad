@@ -1,0 +1,38 @@
+#!/usr/bin/awk -f
+BEGIN {
+	FIELDWIDTHS="16 16 16 6 6 6 7 5"
+	sid=ENVIRON["server_sid"]
+	route=ENVIRON["route"]
+}
+{
+ dest	= $1;
+ gw	= $2;
+ genmask= $3;
+ flags	= $4;
+ netif	= $8;
+ gsub(/\ /,"",dest)
+ gsub(/\ /,"",gw)
+ gsub(/\ /,"",genmask)
+ gsub(/\ /,"",flags)
+ gsub(/\ /,"",netif)
+ if ($1!~/^[A-Z]/ && $1!="") {
+	if (NR %2 == 0) print "<tr class=a1>"
+	else print "<tr class=a2>"
+	if (dest==route) {
+		print "<td class=editdelete><a href='JavaScript:apply(\""dest"\")'><img src='images/menu_addrule.png' width=20 height=20 align=top border=0></a></td>"
+		print "<td><input type=\"text\" name=\"dest\" id=\"dest\" size=15 maxlength=20 value=\""dest"\"></td>"
+		print "<td><input type=\"text\" name=\"gw\" id=\"gw\" size=15 maxlength=15 value=\""gw"\"></td>"
+		print "<td><input type=\"text\" name=\"genmask\" id=\"genmask\" size=15 maxlength=15 value=\""genmask"\"></td>"
+		print "<td>auto</td><td>auto</td>"
+		print "<td class=editdelete><img src='images/eraser_static.png$"sid"' width=20 height=20 align=top border=0></td></tr>"
+	} else {
+		if (gw!~/\./) {
+			print "<td class=editdelete><img src='images/editor_static.png"sid"' width=20 height=20 align=top border=0></td>"
+		} else {
+			print "<td class=editdelete><a href='rt_edit?form&route="dest"$"sid"'><img src='images/editor.png' width=20 height=20 align=top border=0></a></td>"
+		}
+		print "<td>"dest"</td><td>"gw"</td><td>"genmask"</td><td>"flags"</td><td>"netif"</td>"
+		print "<td class=editdelete><a href='JavaScript:rt_del(\""dest"\")'><img src='images/eraser.png' width=20 height=20 align=top border=0></a></td></tr>"
+	}
+ }
+}

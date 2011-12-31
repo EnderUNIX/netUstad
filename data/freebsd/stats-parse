@@ -1,0 +1,12 @@
+{
+ count=$1;
+ if (NR % 2 == 0) print "<tr class=a1>"
+ else print "<tr class=a2>"
+ if (count~/[0-9]/) {
+	$1="";
+	statement=$0;
+	print "<td align=right>"count"</td><td>"statement"</td></tr>"
+ } else {
+	print "<td>&nbsp;</td><td><b>"$0"</b></td></tr>"
+ }
+}

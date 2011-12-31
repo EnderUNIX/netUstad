@@ -1,0 +1,556 @@
+# translation of netUstad.
+# Copyright (C) 2004 Ozkan KIRIK - EnderUNIX SDT
+# This file is distributed under the same license as the netUstad package.
+#  <>, 2004.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: netUstad LINUX-0.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-08-24 16:42+0300\n"
+"PO-Revision-Date: 2004-08-24 22:03+0300\n"
+"Last-Translator: Ozkan KIRIK & Mehmet Onur YALAZI <onur.yalazi@gmail.com>\n"
+"Language-Team: Turkish <gnome-turk@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-9\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Character Set
+msgid "charset"
+msgstr "ISO-8859-9"
+
+msgid ""
+"Copyright (C) 2004  by Ozkan KIRIK\n"
+"\n"
+msgstr ""
+
+msgid ""
+"Version: %s\n"
+"\n"
+msgstr ""
+"Sürüm: %s\n"
+"\n"
+
+msgid ""
+"\n"
+"Listening port %d\n"
+msgstr ""
+"\n"
+"Dinlenen port %d\n"
+
+msgid ""
+"\n"
+"netUstad is started\n"
+"Listening port %d\n"
+msgstr ""
+"\n"
+"netUstad çalýþmaya baþladý\n"
+"Dinlenen port %d\n"
+
+msgid ""
+"\n"
+"netUstad: Invalid Argument\n"
+"\n"
+msgstr ""
+"\n"
+"netUstad: Geçersiz Parametre\n"
+"\n"
+
+msgid ""
+"\n"
+"netUstad: Invalid Number Of Arguments\n"
+"\n"
+msgstr ""
+"\n"
+"netUstad: Geçersiz sayýda parametre\n"
+"\n"
+
+msgid ""
+"\n"
+"netUstad: Network Ustadi (Network Master)\n"
+msgstr ""
+
+msgid "Copyright (C) 2004   by Ozkan KIRIK\n"
+msgstr ""
+
+msgid "File not found: %s"
+msgstr "Bulunamayan Dosya: %s"
+
+msgid "Invalid Username or Password"
+msgstr "Geçersiz Kullanýcý Adý veya Þifre"
+
+msgid "Options:\n"
+msgstr "Seçenekler:\n"
+
+msgid "Session Expired!"
+msgstr "Oturum Zaman Aþýmýna Uðradý!"
+
+msgid "Usage: netustad [options]\n"
+msgstr "Kullaným: netustad [seçenekler]\n"
+
+msgid "You are logged out"
+msgstr "Çýkýþ Yapýldý"
+
+msgid "You are not logged in!"
+msgstr "Giriþ Yapmamýþsýnýz!"
+
+msgid "\t-c\tUse following parameter as configuration file"
+msgstr "\t-c\tKonfigürasyon dosyasý olarak kullan"
+
+msgid "\t-h\tShow this help screen\n"
+msgstr "\t-h\tBu yardým ekranýný göster\n"
+
+msgid "\t-v\tShow version\n"
+msgstr "\t-v\tSürümü göster\n"
+
+msgid "netUstad is started\n"
+msgstr "netUstad çalýþmaya baþladý\n"
+
+msgid "setlocale failed\n"
+msgstr "setlocale baþarýsýz oldu\n"
+
+msgid ""
+"Configuration reloaded successfully.\n"
+"\n"
+msgstr ""
+"Konfigürasyon baþarý ile yeniden yüklendi.\n"
+"\n"
+
+msgid ""
+"Ready for requests...\n"
+"\n"
+msgstr ""
+"Ýstekler bekleniyor...\n"
+"\n"
+
+msgid ""
+"\n"
+"Closing active sessions...\n"
+msgstr ""
+"\n"
+"Aktif oturumlar kapatýlýyor...\n"
+
+msgid ""
+"\n"
+"Program Terminated.\n"
+msgstr ""
+"\n"
+"Program Sonlandýrýldý.\n"
+
+msgid ""
+"\n"
+"Reloading configuration...\n"
+"\n"
+msgstr ""
+"\n"
+"Konfigürasyon yeniden yükleniyor...\n"
+"\n"
+
+msgid "Action"
+msgstr "Ýþlem"
+
+msgid "Action:"
+msgstr "Ýþlem:"
+
+msgid "Add Rule"
+msgstr "Kural Ekle"
+
+msgid "Additional Options:"
+msgstr "Ek Seçenekler:"
+
+msgid "Administrator logged in\n"
+msgstr "Yönetici giriþ yaptý\n"
+
+msgid "Administrator logged out\n"
+msgstr "Yönetici çýkýþ yaptý\n"
+
+msgid "Administrator's Session Expired!\n"
+msgstr "Yöneticinin Oturumu Zaman Aþýmýna Uðradý!\n"
+
+msgid "Auth Failure: Invalid Password"
+msgstr "Giriþ Hatasý: Geçersiz Þifre"
+
+msgid "Auth Failure: Invalid Username"
+msgstr "Giriþ Hatasý: Geçersiz Kullanýcý Adý"
+
+msgid "Auth Failure: Long user or password.\n"
+msgstr "Giriþ Hatasý: Kullanýcý adý veya Þifre Çok Uzun\n"
+
+msgid "Bind error\n"
+msgstr "Socket Baðlantý Hatasý\n"
+
+msgid "Bye bye\n"
+msgstr "Güle Güle\n"
+
+msgid "Byte"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Ýptal"
+
+msgid "Cannot Create Session!\n"
+msgstr "Oturum Oluþturulamýyor!\n"
+
+msgid "Chain Name"
+msgstr "Zincir Adý"
+
+msgid "Chain"
+msgstr "Zincir"
+
+msgid "D.Port"
+msgstr "H.Port"
+
+msgid "Deleted Rule"
+msgstr "Kural Silindi"
+
+msgid "Deleted"
+msgstr "Silindi"
+
+msgid "Destination Address can not be empty"
+msgstr "Hedef Adres boþ olamaz"
+
+msgid "Destination Address"
+msgstr "Hedef Adres"
+
+msgid "Destination Address:"
+msgstr "Hedef Adres:"
+
+msgid "Destination Port Range"
+msgstr "Hedef Port Aralýðý"
+
+msgid "Destination Port Range:"
+msgstr "Hedef Port Aralýðý:"
+
+msgid "Destination"
+msgstr "Hedef"
+
+msgid "Divert-Tee Port/Pipe-Queue No:"
+msgstr ""
+
+msgid "Edit Complete"
+msgstr "Düzenleme Tamamlandý"
+
+msgid "Edit Rule"
+msgstr "Kural Düzenleme"
+
+msgid "Edit Rule:"
+msgstr "Kural Düzenleme:"
+
+msgid "ExtraOptions"
+msgstr "EkSeçenekler"
+
+msgid "File size limit exceeded"
+msgstr "Dosya boyut sýnýrý aþýldý"
+
+msgid "Firewall Configuration Saved"
+msgstr "Güvenlik Duvarý Konfigürasyonu Kaydedildi"
+
+msgid "Fragmented"
+msgstr ""
+
+msgid "Fwd Address"
+msgstr "Fwd Adresi"
+
+msgid "Getsockname error\n"
+msgstr "Getsockname hatasý\n"
+
+msgid "Hangup signal catched"
+msgstr "Hangup sinyali yakalandý"
+
+msgid "ICMP Types"
+msgstr "ICMP Tipleri"
+
+msgid "ICMP Types:"
+msgstr "ICMP Tipleri:"
+
+msgid "IP Options:"
+msgstr "IP Seçenekleri:"
+
+msgid "In"
+msgstr ""
+
+msgid "Input Interface"
+msgstr "Giriþ Arayüzü"
+
+msgid "Invalid Logamount Value"
+msgstr "Geçersiz Logamount Deðeri"
+
+msgid "Invalid Port or Pipe Number!"
+msgstr "Geçersiz Port veya Pipe Numarasý!"
+
+msgid "Invalid Probablity"
+msgstr "Geçersiz Probablity"
+
+msgid "Invalid Rule Number To Skip"
+msgstr "Atlamak için Geçersiz Kural Numarasý"
+
+msgid "Invalid Rule Number"
+msgstr "Geçersiz Kural Numarasý"
+
+msgid "Listen error\n"
+msgstr "Dinleme Hatasý\n"
+
+msgid "Log IP Options"
+msgstr "IP Seçeneklerini Logla"
+
+msgid "Log Out"
+msgstr "Çýkýþ"
+
+msgid "Log Prefix"
+msgstr "Log Öneki"
+
+msgid "Log TCP Options"
+msgstr "TCP Seçeneklerini Logla"
+
+msgid "Log TCP Sequence"
+msgstr "TCP Sekansýný Logla"
+
+msgid "Log"
+msgstr ""
+
+msgid "Logamount:"
+msgstr ""
+
+msgid "Logging Level"
+msgstr "Loglama Seviyesi"
+
+msgid "Logging"
+msgstr ""
+
+msgid "Login"
+msgstr "Giriþ"
+
+msgid "No Mac"
+msgstr "Mac Yok"
+
+msgid "Opt"
+msgstr ""
+
+msgid "Options"
+msgstr "Seçenekler"
+
+msgid "Out"
+msgstr ""
+
+msgid "Output Interface"
+msgstr "Çýkýþ Arayüzü"
+
+msgid "Packet Direction:"
+msgstr "Paket Yönü:"
+
+msgid "Packet"
+msgstr "Paket"
+
+msgid "Password"
+msgstr "Þifre"
+
+msgid "Please Enter Your<br>Username and Password"
+msgstr "Lütfen Kullanýcý Adý ve <br> Þifrenizi Girin"
+
+msgid "Policy"
+msgstr "Politika"
+
+msgid "Probablity"
+msgstr ""
+
+msgid "Proto"
+msgstr ""
+
+msgid "Protocol"
+msgstr "Protokol"
+
+msgid "Protocol:"
+msgstr "Protokol:"
+
+msgid "Redirecting to Rule List"
+msgstr "Kural Listesine Yönlendiriliyor"
+
+msgid "Delete Rule:"
+msgstr "Kural Sil:"
+
+msgid "Reject-With"
+msgstr ""
+
+msgid "Replaced with"
+msgstr "ile Deðiþtirildi"
+
+msgid "Rule Hits"
+msgstr "Kural Hitleri"
+
+msgid "Rule List"
+msgstr "Kural Listesi"
+
+msgid "Rule No"
+msgstr "Kural No"
+
+msgid "Rule No:"
+msgstr "Kural No:"
+
+msgid "Rule added"
+msgstr "Kural Eklendi"
+
+msgid "Rule is added"
+msgstr "Kural Eklendi"
+
+msgid "Rule"
+msgstr "Kural"
+
+msgid "RuleNo"
+msgstr "KuralNo"
+
+msgid "S.Port"
+msgstr "K.Port"
+
+msgid "SSL Certificate file could not be found!\n"
+msgstr "SSL Sertifika dosyasý bulunamadý!\n"
+
+msgid "SSL Private Key does not match certificate public key!\n"
+msgstr "SSL Gizli Anahtarý, Sertifikanýn kamu anahtarý ile eþleþmiyor!\n"
+
+msgid "SSL Private Key file could not be found!\n"
+msgstr "SSL Gizli Anahtar dosyasý bulunamadý!\n"
+
+msgid "Session Killed Because of Bad Request\n"
+msgstr "Geçersiz istek nedeniyle Oturum Kapatýldý\n"
+
+msgid "Skip To:"
+msgstr ""
+
+msgid "Socket error\n"
+msgstr "Soket Hatasý\n"
+
+msgid "Source Address can not be empty"
+msgstr "Kaynak Adres boþ olamaz"
+
+msgid "Source Address"
+msgstr "Kaynak Adres"
+
+msgid "Source Address:"
+msgstr "Kaynak Adres:"
+
+msgid "Source Port Range"
+msgstr "Kaynak Port Aralýðý"
+
+msgid "Source Port Range:"
+msgstr "Kaynak Port Aralýðý:"
+
+msgid "Source"
+msgstr "Kaynak"
+
+msgid "State Match"
+msgstr "State Eþleme"
+
+msgid "Statefull Rules"
+msgstr "Statefull Kurallar"
+
+msgid "Static Rules"
+msgstr "Statik Kurallar"
+
+msgid "Submit Rule"
+msgstr "Kuralý Yolla"
+
+msgid "Submit"
+msgstr "Yolla"
+
+msgid "T.Port"
+msgstr "H.Port"
+
+msgid "TCP Flags"
+msgstr "TCP Bayraklarý"
+
+msgid "TCP Flags:"
+msgstr "TCP Bayraklarý"
+
+msgid "TCP Options:"
+msgstr "TCP Seçenekleri:"
+
+msgid "Target"
+msgstr "Hedef"
+
+msgid "Terminate signal catched"
+msgstr "Terminate sinyali yakalandý"
+
+msgid "The Request is"
+msgstr "Yapýlan istek"
+
+msgid "Unreach Code:"
+msgstr "Unreach Kodu:"
+
+msgid "User Defined Chain"
+msgstr "Kullanýcý Tanýmlý Zincir"
+
+msgid "Username"
+msgstr "Kullanýcý Adý"
+
+msgid "Via:"
+msgstr ""
+
+msgid "administration panel"
+msgstr "yönetim paneli"
+
+msgid "is deleted"
+msgstr "silindi"
+
+msgid "is replaced with"
+msgstr "ile deðiþtirildi"
+
+msgid "login panel"
+msgstr "giriþ paneli"
+
+msgid "netUstad is already running!\n"
+msgstr "netUstad zaten çalýþýyor!\n"
+
+msgid "other"
+msgstr "diðer"
+
+msgid "will be deleted. Is it Okay?"
+msgstr "silinecektir! Emin misiniz?"
+
+msgid "Bad Request From"
+msgstr "Geçersiz istek:"
+
+msgid "Statistics"
+msgstr "Ýstatistikler"
+
+msgid "Routing Table"
+msgstr "RouteTablosu"
+
+msgid "NetIf Table"
+msgstr "Að Arayüzleri"
+
+msgid "Write Configuration"
+msgstr "Konfigurasyonu Kaydet"
+
+msgid "Name"
+msgstr "Ýsim"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Gateway"
+msgstr "Að Geçidi"
+
+msgid "Network"
+msgstr "Að"
+
+msgid "Flags"
+msgstr "Bayraklar"
+
+msgid "NetIf"
+msgstr "Arayüz"
+
+msgid "Dynamic NAT"
+msgstr "Dinamik NAT"
+
+msgid "Static NAT"
+msgstr "Statik NAT"
+
+msgid "Virtual Server"
+msgstr "Sanal Sunucu"
+
+msgid "NAT Table"
+msgstr "NAT Tablosu"
+
+msgid "Under Construction"
+msgstr "Yapým Aþamasýnda"

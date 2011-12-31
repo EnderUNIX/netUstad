@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+
+# ==================
+# == Send Headers ==
+# ==================
+
+echo "Content-type: text/html&&" | $tr_cmd "&" "\n"
+echo "<html>"
+echo "<head>"
+echo "<title>netUstad - "$netustadversion"</title>"
+echo '<META Http-Equiv="Pragma" Content="no-cache">'
+echo '<META http-equiv="Refresh" content="0; URL=/$'$server_sid'">'
+echo "</head>"
+echo "</html>"

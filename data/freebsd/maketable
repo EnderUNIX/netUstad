@@ -1,0 +1,13 @@
+{
+	for (i = 1 ; i <= NF ; i++) {
+		if (i == 1)
+			if (NR % 2 == 0)
+				print "<tr class=a1><td>" $i "</td>"
+			else
+				print "<tr class=a2><td>" $i "</td>"
+		else if (i == NF)
+			print "<td>" $i "</td></tr>"
+		else
+			print "<td>" $i "</td>"
+	}
+}

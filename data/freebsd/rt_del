@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# /* ******** netUstad: Network Ustadi (Network Master) *********/
+# /* This software is Copyright (C) 2004 by Ozkan KIRIK.        */
+# /* Permission is granted to redistribute and modify this      */
+# /* software under the terms of the GNU General Public License */
+# /* available at http://www.gnu.org/                           */
+# /**************************************************************/
+
+cd $work_path
+
+#======================
+#== Delete The Route ==
+#======================
+$route_cmd delete $route
+
+#===================
+#== Call rt_table ==
+#===================
+./rt_table
